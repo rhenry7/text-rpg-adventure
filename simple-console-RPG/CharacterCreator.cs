@@ -14,26 +14,32 @@ public class CharacterStats
     public int HP { get; set; }
     public int Speed { get; set; }
     public int Strength { get; set; }
+    public int Range { get; set; } 
     public int Magic { get; set; }
     public int Luck { get; set; }
     public int Level { get; set; }
     public int EXP { get; set; }
+    public int Dice { get; set; }
+    // add range system for Elf
+    // int staminaLevel / int endurance == staminaLevel++ (too complex for now?)
+    // use RollDice for enemy interaction, enemy attack;
 
-    // int staminaLevel / int endurance == staminaLevel++
+    public void RollDice()
+    {
+        Dice = new Random().Next(1, 10);
+    }
 
     public void PrintOptions()
     {
-        Console.WriteLine("Please choose an option...");
-        Console.WriteLine("1. Elf"); // range; speed;
-        Console.WriteLine("2. Mage"); // magic; 
-        Console.WriteLine("3. Hero"); // strength; speed;
-        Console.WriteLine("4. Hobbit"); // luck;
-        Console.WriteLine("5. Dwarf"); // strengh;
-        Console.WriteLine("6. Barbarian"); // hp; strength;
-        Console.WriteLine("7. Theif"); // speed; luck;
+        Console.WriteLine("Choose your starting class...");
+        Console.WriteLine("1. Elf - range; speed;"); // range; speed;
+        Console.WriteLine("2. Mage - magic;"); // magic; 
+        Console.WriteLine("3. Hero - strength; speed;"); // strength; speed;
+        Console.WriteLine("4. Hobbit - luck"); // luck;
+        Console.WriteLine("5. Dwarf - strength;"); // strengh;
+        Console.WriteLine("6. Barbarian - hp; strength;"); // hp; strength;
+        Console.WriteLine("7. Theif - speed; luck"); // speed; luck;
         StartingClass = int.Parse(Console.ReadLine());
-
-
     }
 
     public void CreateCharacter() 
@@ -43,20 +49,22 @@ public class CharacterStats
         Console.WriteLine($"Welcome {Name}!");
         Console.WriteLine("Choose your class");
         PrintOptions();
-        int times = 100;
 
         if (StartingClass == 1)
         {
             Console.WriteLine("You have chosen Elf!");
             CharacterStats elf = new CharacterStats();
+
             elf.Health = 1;
             elf.HP = 10;
-            elf.Speed = 5;
+            elf.Speed = 4;
             elf.Strength = 2;
+            elf.Range = 4;
             elf.Magic = 0;
             elf.Luck = 0;
             elf.Level = 1;
             elf.EXP = 0;
+
             Console.WriteLine("These are your stats");
             Console.WriteLine($"Health: {elf.Health}");
             Console.WriteLine($"HP: {elf.HP}");
@@ -69,10 +77,7 @@ public class CharacterStats
             Console.ReadLine();
         }
     }
-
-
-    int diceRoll = new Random().Next(1, 10);
-
+    //int diceRoll = new Random().Next(1, 10);
     static void Main(string[] args)
     {
         Console.WriteLine("Welcome to Console RPG");
