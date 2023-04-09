@@ -38,7 +38,7 @@ public class CharacterStats
         StartingClass = int.Parse(Console.ReadLine());
     }
 
-    public void CreateCharacter() 
+    public CharacterStats CreateCharacter() 
     {
         Console.WriteLine("Enter your character name ");
         Name = Console.ReadLine();
@@ -85,17 +85,20 @@ public class CharacterStats
             Console.WriteLine($"Luck: {elf.Luck}");
             Console.WriteLine($"Level: {elf.Level}");
             Console.WriteLine($"Exp: {elf.EXP}");
-            Console.ReadLine();
+            return elf;
         }
+
+        return null;
     }
+
     //int diceRoll = new Random().Next(1, 10);
-    static void Main(string[] args)
-    {
-        Console.WriteLine("Welcome to Console RPG");
-        CharacterStats player = new CharacterStats();
-        player.CreateCharacter();
-        //player.RollDice();
-    }
+    //static void Main(string[] args)
+    //{
+    //    Console.WriteLine("Welcome to Console RPG");
+    //    CharacterStats player = new CharacterStats();
+    //    player.CreateCharacter();
+    //    //player.RollDice();
+    //}
 
 }
 
