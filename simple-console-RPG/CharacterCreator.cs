@@ -6,7 +6,7 @@ public class CharacterStats
 
     // character basics
     public string Name { get; set; }
-    public string StartingClass { get; set; }
+    public int StartingClass { get; set; }
     public int StartingLevel { get; set; }
  
     // attributes
@@ -21,7 +21,7 @@ public class CharacterStats
 
     // int staminaLevel / int endurance == staminaLevel++
 
-    public void printOptions()
+    public void PrintOptions()
     {
         Console.WriteLine("Please choose an option...");
         Console.WriteLine("1. Elf"); // range; speed;
@@ -31,6 +31,8 @@ public class CharacterStats
         Console.WriteLine("5. Dwarf"); // strengh;
         Console.WriteLine("6. Barbarian"); // hp; strength;
         Console.WriteLine("7. Theif"); // speed; luck;
+        StartingClass = int.Parse(Console.ReadLine());
+
 
     }
 
@@ -38,15 +40,34 @@ public class CharacterStats
     {
         Console.WriteLine("Enter your character name ");
         Name = Console.ReadLine();
-        //this.health = health;
-        //this.hp = hp;
-        //this.speed = speed;
-        //this.strength = strength;
-        //this.magic = magic;
-        //this.luck = luck;
-        //this.level = level;
-        //this.exp = exp;
+        Console.WriteLine($"Welcome {Name}!");
+        Console.WriteLine("Choose your class");
+        PrintOptions();
+        int times = 100;
 
+        if (StartingClass == 1)
+        {
+            Console.WriteLine("You have chosen Elf!");
+            CharacterStats elf = new CharacterStats();
+            elf.Health = 1;
+            elf.HP = 10;
+            elf.Speed = 5;
+            elf.Strength = 2;
+            elf.Magic = 0;
+            elf.Luck = 0;
+            elf.Level = 1;
+            elf.EXP = 0;
+            Console.WriteLine("These are your stats");
+            Console.WriteLine($"Health: {elf.Health}");
+            Console.WriteLine($"HP: {elf.HP}");
+            Console.WriteLine($"Speed: {elf.Speed}");
+            Console.WriteLine($"Strength: {elf.Strength}");
+            Console.WriteLine($"Magic: {elf.Magic}");
+            Console.WriteLine($"Luck: {elf.Luck}");
+            Console.WriteLine($"Level: {elf.Level}");
+            Console.WriteLine($"Exp: {elf.EXP}");
+            Console.ReadLine();
+        }
     }
 
 
@@ -55,6 +76,8 @@ public class CharacterStats
     static void Main(string[] args)
     {
         Console.WriteLine("Welcome to Console RPG");
+        CharacterStats player = new CharacterStats();
+        player.CreateCharacter();
     }
 
 }
