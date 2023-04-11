@@ -21,6 +21,9 @@ test-results/
 .AppleDouble
 .LSOverride
 
+# hide api info
+simple-console-RPG/apiInfo.cs
+
 # Icon must end with two \r
 Icon
 
