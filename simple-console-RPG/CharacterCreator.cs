@@ -34,7 +34,7 @@ public class CharacterStats
         Console.WriteLine("4. Hobbit - luck"); // luck;
         Console.WriteLine("5. Dwarf - strengt;"); // strengh;
         Console.WriteLine("6. Barbarian - hp, strength"); // hp; strength;
-        Console.WriteLine("7. Theif - speed, luck"); // speed; luck;
+        Console.WriteLine("7. Theif - speed, luck"); // speed; luck;        StartingClass = int.Parse(Console.ReadLine());
         StartingClass = int.Parse(Console.ReadLine());
     }
 
@@ -45,7 +45,7 @@ public class CharacterStats
         Console.WriteLine($"Welcome {Name}!");
         Console.WriteLine("Choose your class");
         PrintOptions();
-
+        //Console.ReadLine();
         if (StartingClass == 1)
         {
             Console.WriteLine("You have chosen Elf!");
@@ -53,8 +53,8 @@ public class CharacterStats
             int startingLevel = 1;
             int PointsToSpend = 10;
             Console.WriteLine($"Your starting level is {startingLevel}!");
+            Console.WriteLine($"You have {PointsToSpend} points to spend.");
             Console.WriteLine("Enter the following attributes for your character:");
-            Console.WriteLine("\n");
             Console.Write("Health: ");
             elf.Health = int.Parse(Console.ReadLine());
             PointsToSpend = PointsToSpend - elf.Health;
@@ -71,7 +71,6 @@ public class CharacterStats
             elf.Magic = int.Parse(Console.ReadLine());
             PointsToSpend = PointsToSpend - elf.Magic;
             Console.WriteLine($"Remaining points to spend: {PointsToSpend}");
-            Console.WriteLine("\n");
             Console.Write("Luck: ");
             elf.Luck = int.Parse(Console.ReadLine());
             PointsToSpend = PointsToSpend - elf.Luck;
@@ -90,15 +89,6 @@ public class CharacterStats
 
         return null;
     }
-
-    //int diceRoll = new Random().Next(1, 10);
-    //static void Main(string[] args)
-    //{
-    //    Console.WriteLine("Welcome to Console RPG");
-    //    CharacterStats player = new CharacterStats();
-    //    player.CreateCharacter();
-    //    //player.RollDice();
-    //}
 
 }
 

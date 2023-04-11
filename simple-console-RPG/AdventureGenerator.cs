@@ -1,75 +1,76 @@
-﻿using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using simple_console_RPG;
+﻿using System.Net.Http.Headers;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using OpenAI_API;
+using System.IO;
+using simple_console_RPG;
 
 
 public class AdventureGenerator
 {
-
     public enum Location
     {
-        Castle = 1,
-        Forrest = 2,
-        Desert = 3,
-        Swamp = 4,
-        Dungeon = 5,
-        Village = 6,
-        Mountain = 7,
-        Volcano = 8,
-        IceKingdom = 9,
-        RockyVillage = 10,
+        Castle,
+        Forrest,
+        Desert,
+        Swamp,
+        Dungeon,
+        Village,
+        Mountain,
+        Volcano,
+        IceKingdom,
+        RockyVillage,
     }
 
-    public async Task<string>  GenerateAdventure(int diceValue)
+
+    public enum Enemy
     {
-        string prompt = "Write a set in a Forrest";
-        string apiKey = "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";
-        string apiUrl = "https://api.openai.com/v1/engines/davinci-codex/completions";
+        GoblinArmy,
+        EvilElves,
+        MagicMushroomPeople,
+        SwampMonsters,
+        DungeonDragons,
+        GiantTrolls,
+        MagicBirds,
+        LavaLizardsWithSwords,
+        RobotPenguins,
+        Knights,
+    }
 
-        using var client = new HttpClient();
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
-
-        //if(diceValue == 2)
-        //{
-        //    prompt = prompt + Location.Forrest;
-        //    //Console.WriteLine(prompt);
-        //}
-
-        var requestData = new
-        {
-            prompt,
-            max_tokens = 100,
-            n = 1,
-            stop = "\n"
-        };
-
-        Console.WriteLine(prompt);
-        var json = JsonSerializer.Serialize(requestData);
-
-        var content = new StringContent(json);
-        content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+    public enum Objective
+    {
+        SaveThePrincess,
+        AvengeYourFather,
+        DestroyTheMagicOrb,
+        FindTheAncientTreasure,
+        TheSacredSword,
+        HealTheAncientTree,
+        DefeatTheEmperor,
+        DeliverTheChosenOneToSafety,
+        FindTheKeysToTheHiddenKingdom,
+        SlayTheDragon,
+    }
 
 
-        var response = await client.PostAsync("https://api.openai.com/v1/completions", content);
-        var resjson = await response.Content.ReadAsStringAsync();
+    public enum Colors { Red, Orange, Green, Blue, Black };
+    public enum Fruits { Apple = 1, Banana = 2, Orange = 3, Peer = 4 };
 
-        if (response.IsSuccessStatusCode)
-        {
-            Console.WriteLine("status success");
-            var responseContent = await response.Content.ReadAsStringAsync();
-            dynamic responseObject = Newtonsoft.Json.JsonConvert.DeserializeObject(responseContent);
-            string generatedText = responseObject.choices[0].text;
-            return generatedText;
-        }
-        else
-        {
-            Console.WriteLine("Failed to generate text");
-            return "";
-        }
+
+    public async Task<string> GenerateAdventure()
+    // int Location, int Enemy, int Objective
+    {
+        apiInfo apiKey = new apiInfo();
+        OpenAIAPI api = new OpenAIAPI(apiKey.ApiInfo());
+        var chat = api.Chat.CreateConversation();
+
+        int DiceRollOne = new Random().Next(1, 10);
+        int DiceRollTwo = new Random().Next(1, 10);
+        int DiceRollThree = new Random().Next(1, 10);
+        chat.AppendSystemMessage($"Write a console RPG, 80s style dungeones and dragons story/plot, one paragraph, \n" +
+            $" set in {Enum.GetName(typeof(Location), DiceRollOne)} " +
+            $"\n where the character must {Enum.GetName(typeof(Objective), DiceRollTwo)}" +
+            $"and the objective is to {Enum.GetName(typeof(Objective), DiceRollThree)}");
+        string response = await chat.GetResponseFromChatbotAsync();
+        return response;
 
     }
 }

@@ -5,7 +5,7 @@ namespace simple_console_RPG
 	{
 		public string ApiInfo()
 		{
-			return "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";
+			return "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";
 
         }
 	}
