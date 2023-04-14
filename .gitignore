@@ -402,7 +402,10 @@ ASALocalRun/
 *.nvuser
 
 # MFractors (Xamarin productivity tool) working folder
-.mfractor/
+.mfractor/ 
+
+# hide the apikey
+simple-console-RPG/apikey.txt
 
 # Local History for Visual Studio
 .localhistory/
