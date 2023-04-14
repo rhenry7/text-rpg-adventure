@@ -4,10 +4,11 @@ using simple_console_RPG;
 
 //using Internal;
 public class CharacterStats
+
+
 {
     // character basics
     public string? Name { get; set; }
-
 
     public int StartingClass { get; set; }
 
@@ -113,7 +114,7 @@ public class CharacterStats
             Console.WriteLine("What will you do?...  (2) \n");
             int firstChoice = int.Parse(Console.ReadLine()); // enter 2
             string chapterTwo = story.GenerateAdventure(null, null, null, firstChoice, playerStats).Result;
-            Console.WriteLine(chapterTwo);
+            Console.WriteLine(chapterTwo); 
             Console.WriteLine("What will you do now?... (3) \n");
             int secondChoice = int.Parse(Console.ReadLine()); // enter 3
             string chapterThree = story.GenerateAdventure(null, null, null, secondChoice, playerStats).Result;
@@ -132,30 +133,23 @@ public class CharacterStats
 
     }
 
-    public void RollDiceOptions()
+     public void RollDiceOptions()
     {
+
         Console.WriteLine("Would you like to roll the dice...");
         Console.WriteLine("2 - for yes");
         Console.WriteLine("1 - for no");
         RollDiceChoice = Console.ReadLine();
-        DiceRollResut();
-        Console.WriteLine("\n");
-
-
-    }
-
-    public int? DiceRollResut()
-    {
-        if (RollDiceChoice == "y")
+        if(RollDiceChoice == "2")
         {
-            DiceValue = new Random().Next(0, 9);
-            return 0;
-           
-        }
-        Console.WriteLine("Thank you for playing..");
-        return null;
-    }
+        Console.WriteLine("\n");
+        } else
+        {
+            Console.WriteLine("you suck");
 
+        }
+
+    }
 
 }
 
