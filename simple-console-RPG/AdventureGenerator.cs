@@ -164,7 +164,13 @@ public class AdventureGenerator
             int enemyStrengthLevel = new Random().Next(0, 4);
             int enemySpeedLevel = new Random().Next(0, 4);
             chat.AppendUserInput($"The enemy objective is described more: {EnemyGoal} ...two sentences");
-            Console.WriteLine($"an enemy approaches... prepare to fight ");
+            Console.WriteLine($"An enemy approaches... Will you run or will you fight? ");
+            // choose to run? or choose to fight!
+            // 1 to fight, 2 to run
+            int combatChoice = int.Parse(Console.ReadLine());
+
+            if(combatChoice == 2)
+            {
 
             if ( player.Strength > enemyStrengthLevel)
             {
@@ -172,7 +178,7 @@ public class AdventureGenerator
                 +  $"they battle in the {Setting} but the battle is {CombatDescription}" 
                 + $"player has decided becuase of motive to fight typeof:  [single, singular] {EnemyAi} using their typeof: {Goal}"
                 + $"continue the story, player takes some damage in battle, they navigate {Setting} to defeat {EnemyAi} ...four sentences");
-             
+      
                 newPlayer.Health = player.Health - enemyStrengthLevel + 2;
          
                 Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
@@ -193,42 +199,50 @@ public class AdventureGenerator
                     + $"now, the character must use their skills to defeat the [single, singular] {EnemyAi}"
                     + $"the {EnemyAi} has been strong, and the character has been injured .. four sentences");
           
-
                 Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
                 Console.WriteLine("You have almost died! but you survive and must march on...");
                 var endOfChapter = await chat.GetResponseFromChatbotAsync();
                 ChapterTwoComplete = true;
                 return endOfChapter;
             }
-            else if (player.Speed > enemySpeedLevel)
-            {
-                chat.AppendUserInput($"continue the story.. characters struggle to fight {EnemyAi},"
-                + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
-                + "due to speed character takes minor damage, and deals with an injury"
-                + $"luckily, they use their speed to evade the enemy.. they navigate the {Setting} and get away!"
-                + $"speed has helped the character escape the evil {EnemyAi}.. the journey continues ..five sentences");
-                newPlayer.Health = player.Health;
-                newPlayer.Health = newPlayer.Health - 4;
-                var endOfChapter = await chat.GetResponseFromChatbotAsync();
-                ChapterTwoComplete = true;
-                return endOfChapter;
-            } else if(player.Magic > enemyStrengthLevel)
-            {
-                newPlayer.Health = player.Health;
-                newPlayer.Health = newPlayer.Health - new Random().Next(0, 10);
-                chat.AppendUserInput($"continue the story.. characters encounter and must fight the {EnemyAi},"
-                 + "they take damage and is injured!.."
-                 + $"they battle in the {Setting} but the battle is {CombatDescription}, they character uses a magic spell blast to fight and win.. four sentences");
-                var endOfChapter = await chat.GetResponseFromChatbotAsync();
-                ChapterTwoComplete = true;
-                return endOfChapter;
 
-            } else
-            {
 
-            return "should not be here, fix me right now!!";
             }
-  
+            else
+            {
+                if (player.Speed > enemySpeedLevel)
+                {
+                    chat.AppendUserInput($"continue the story.. characters struggle to fight {EnemyAi},"
+                    + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
+                    + "due to speed character takes minor damage, and deals with an injury"
+                    + $"luckily, they use their speed to evade the enemy.. they navigate the {Setting} and get away!"
+                    + $"speed has helped the character escape the evil {EnemyAi}.. the journey continues ..five sentences");
+                    newPlayer.Health = player.Health;
+                    newPlayer.Health = newPlayer.Health - 4;
+                    var endOfChapter = await chat.GetResponseFromChatbotAsync();
+                    ChapterTwoComplete = true;
+                    return endOfChapter;
+                }
+                else if (player.Magic > enemyStrengthLevel)
+                {
+                    newPlayer.Health = player.Health;
+                    newPlayer.Health = newPlayer.Health - new Random().Next(0, 10);
+                    chat.AppendUserInput($"continue the story.. characters encounter and must fight the {EnemyAi},"
+                     + "they take damage and is injured!.."
+                     + $"they battle in the {Setting} but the battle is {CombatDescription}, they character uses a magic spell blast to fight and win.. four sentences");
+                    var endOfChapter = await chat.GetResponseFromChatbotAsync();
+                    ChapterTwoComplete = true;
+                    return endOfChapter;
+
+                }
+                else
+                {
+
+                    return "should not be here, fix me right now!! (inside of combat loop)";
+                }
+            }
+
+            return "should not be here, fix me right now!! (outside of combat loop)";
         }
 
         async Task<string> ChapterThreeAsync()
@@ -261,12 +275,12 @@ public class AdventureGenerator
                     return "You have died! Game Over.";
                 } 
 
-                Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
+                Console.WriteLine("You have taken more damage!.. yet you still continue...");
                 chat.AppendUserInput($" character continues the story from where it left off, the player continues to battle more of the enemy,"
                 +" they are suprised an attacked by random enemy"
-                + $" character now only has {newPlayer.Health - 6}  health points remaining"
+                + $" character now only has {newPlayer.Health}  health points remaining"
                 + $" player has strong emotional reaction to the {EnemyGoal}"
-                + $" player encounters the leader {enemyLeaderArray[new Random().Next(0, 9)]}.. one paragraph");
+                + $" player encounters the leader {enemyLeaderArray[new Random().Next(0, 9)]} + {EnemyAi}.. one paragraph");
                 var result = await chat.GetResponseFromChatbotAsync();
                 return result;
             }
