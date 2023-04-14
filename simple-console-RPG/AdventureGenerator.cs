@@ -125,8 +125,8 @@ public class AdventureGenerator
             else
         {
             chat.AppendSystemMessage("Write the intro story for a dungeons and dragons RPG board game."
-                      + "Create a story based on user input such as location, enemy, and objective."
-                      + "If the user tells you a location, enemy and objective, you create the setting for the story based on input. limit 1 paragraph");
+            + "Create a story based on user input such as location, enemy, and objective."
+            + "If the user tells you a location, enemy and objective, you create the setting for the story based on input. limit 1 paragraph");
             chat.AppendUserInput($"Location: {Enum.GetName(typeof(Location), DiceRollOne)}");
             chat.AppendUserInput($"Enemy: {Enum.GetName(typeof(Enemy), DiceRollTwo)}");
             chat.AppendUserInput($"Objective: {Enum.GetName(typeof(Objective), DiceRollThree)}");
@@ -140,10 +140,10 @@ public class AdventureGenerator
             if( player.Strength > enemyLevel)
             {
                 chat.AppendUserInput($"characters struggle to fight {EnemyAi},"
-            + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
-            + $"they see something in the {Setting} that may help them.. three sentences");
-                chat.AppendUserInput($"because character has  level strength: {player.Strength}, they were able to defeat {EnemyAi} \n");
-                Console.WriteLine($"Due to your strength... you may continue on your quest...");
+                + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
+                + $"they see something in the {Setting} that may help them.. three sentences");
+                chat.AppendUserInput($"{player.Name} was able to defeat {EnemyAi} using his strength in a great battle! \n");
+                Console.WriteLine($"Due to your strength... you may continue on your quest... \n");
             }
 
             if (player.Strength < 4)
@@ -152,10 +152,7 @@ public class AdventureGenerator
                 chat.AppendUserInput($"the character has taken heavy damage in their battle against {EnemyAi}");
                 newPlayer.Health = player.Health;
                 newPlayer.Health = newPlayer.Health - 4;
-
                 Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
-                Console.WriteLine("Health: " + player.Health);
-                Console.WriteLine("Health: " + newPlayer.Health);
                 Console.WriteLine("You have almost died! but you march on...");
             }
 
@@ -175,12 +172,24 @@ public class AdventureGenerator
 
         async Task<string> ChapterThreeAsync()
         {
-            chat.AppendUserInput($"They battle more {EnemyAi},"
-            + $"they navigate the {Setting} and found someone helpful "
-            + $" {player.Name} has almost reached the {Goal}"
-            + $" {player.Name} must over come a tragedy and sacrifice to obtain{Goal}.. one paragraph");
-            var result = await chat.GetResponseFromChatbotAsync();
-            return result;
+            if(player.Luck >= 7)
+            {
+                chat.AppendUserInput($"They survive an attack agaisnt {EnemyAi},"
+         + $"in the {Setting}, the player finds a lucky: weapon. "
+         + $" {player.Name} miracously achieves the {Goal}, with the help of a legendary warrior who happened to be in {Setting}"
+         + $"  ...one paragraph");
+                var result = await chat.GetResponseFromChatbotAsync();
+                return result;
+            } else
+            {
+                chat.AppendUserInput($"They battle more {EnemyAi},"
+          + $"they navigate the {Setting} and found someone: kind; wise; age; "
+          + $" {player.Name} has almost reached; nearly accomplish; the {Goal}"
+          + $" {player.Name} must defeat the strongest boss {EnemyAi} to accomplish {Goal}.. one paragraph");
+                var result = await chat.GetResponseFromChatbotAsync();
+                return result;
+            }
+          
         }
 
 
