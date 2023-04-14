@@ -67,6 +67,7 @@ public class CharacterStats
             var elf = new CharacterStats();
             Console.WriteLine("You have chosen Elf! \n");
             var pointsToSpend = 10;
+            int pointsRemaining = 10;
             var stats = new[] { "Health", "Speed", "Strength", "Magic", "Luck" };
             var statsValues = new int[stats.Length];
 
@@ -88,10 +89,17 @@ public class CharacterStats
 
             for (int i = 0; i < stats.Length; i++)
             {
+                if(pointsToSpend >= pointsRemaining)
+                {
                 Console.Write($"{stats[i]}: ");
                 statsValues[i] = int.Parse(Console.ReadLine());
-                pointsToSpend -= statsValues[i];
-                Console.WriteLine($"Remaining points to spend: {pointsToSpend} \n");
+                pointsRemaining = pointsToSpend -= statsValues[i];
+                Console.WriteLine($"Remaining points to spend: {pointsRemaining} \n");
+
+                } else
+                {
+                    Console.WriteLine($"You fool! you have no more points!");
+                }
             }
 
             playerStats.UpdateStats(statsValues, Name, CharacterClass);
