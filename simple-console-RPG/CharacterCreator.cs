@@ -127,7 +127,7 @@ public class CharacterStats
             Console.WriteLine("What will you do now?... (chapter three) \n");
             string thirdChoice = Console.ReadLine(); // enter 4
             string chapterFour = story.GenerateAdventure(null, null, null, thirdChoice, playerStats).Result;
-            // player might need to accept in order for the sideQuest to work
+            // TODO: player might need to accept in order for the sideQuest to work
             Console.WriteLine(chapterFour);
 
             return elf;

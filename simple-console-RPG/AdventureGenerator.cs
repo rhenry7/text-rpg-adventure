@@ -13,15 +13,15 @@ public class AdventureGenerator
     public string[] npcArray = new string[] { "Wise old person", "young child", "lost banker" };
     // specifics for enemy, locations or objective
     public string[] enemyMotivationArray = new string[] {
-        "Environmentalism: The enemy is an environmental extremist who believes that humans are destroying the planet and seeks to stop them at any cost.",
-        "Religious fundamentalism: The enemy is Mysteriously motivated by religious fundamentalism and seeks to establish a theocratic state based on their particular religion.",
-        "Capitalism: The enemy is a greedy capitalist who believes that profit and economic growth are the most important goals, even if it means exploiting others and damaging the environment.",
-        "Neo-colonialism: The enemy is a representative of a powerful foreign kindgom that seeks to exploit or dominate the world for their own benefit.",
+        "Environmentalism: The enemy is an environmental extremist who believes that humans are destroying the planet and seeks to stop them at any cost by destroying all of humanity",
+        "Religious fundamentalism: The enemy is Mysteriously motivated by religious fundamentalism and seeks to establish a theocratic state based on their particular belief system.",
+        "Greed: The enemy is a greedy villian who believes that wealth is the most important goal, even if it means exploiting others and destroying any thing in their path.",
+        "Pride: The enemy is a representative of a powerful foreign kindgom that seeks to exploit or dominate the world for their own benefit.",
         "Madness: The enemy is driven insane by dark magic, a curse, or a traumatic event, causing them to lash out against others.",
         "Redemption: The enemy seeks redemption for past misdeeds, but believes that the only way to achieve it is by committing a great act of evil.",
         "Survival: The enemy believs they are justified and is simply trying to survive in a dangerous world and views the players as a threat to their own existence.",
         "Honor: The enemy is Fiercely motivated by a sense of honor or duty, and believes that their actions are justified by a higher moral code.",
-        "Independence: The enemy is fighting for independence and autonomy from a larger, more powerful state or kingdom, motivated by a desire for self-determination and sovereignty.",
+        "Independence: The enemy is fighting for independence and autonomy from a larger, more powerful state or kingdom, motivated by a desire for self-determination and sovereignty... they will destroy everything to achieve this",
         "Love: The enemy believs they are the hero is motivated by love for another person, whether it be a romantic partner, family member, or friend, and will do anything to protect them."
     };
     // verbs
@@ -48,8 +48,6 @@ public class AdventureGenerator
         HealthBased, 
         Default
     }
-
-
 
     private string _setting { get; set; }
     private string _enemyAI { get; set; }
@@ -263,18 +261,23 @@ public class AdventureGenerator
                 chat.AppendUserInput($"continue the story.. characters feel emotion about {EnemyGoal},"
                  + $"they navigate the {Setting} and use their magic {CombatDescription}, they character uses their magic to solve a mystery in the {Setting} in order to stop main {EnemyAi}.. four sentences");
                 var endOfChapter = await chat.GetResponseFromChatbotAsync();
-                ChapterTwoComplete = true;
-                ChapterFourAsync();
+                ChapterThreeComplete = true;
                 return endOfChapter;
 
             } else
             {
+                ChapterThreeComplete = true;
                 newPlayer.Health = player.Health;
                 newPlayer.Health = newPlayer.Health - new Random().Next(0, 10) * 2;
                 Console.WriteLine($"A fierce battle begins! You have HP: {newPlayer.Health} remaining");
                 if(newPlayer.Health == 0 || newPlayer.Health < 0)
                 {
+                    Console.WriteLine("You were neither strong or lucky enough to survive this quest young warrior... you have fallen in battle.");
+                    Console.WriteLine("You have lost! Game Over.");
+                    chat.AppendUserInput($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
                     chat.AppendUserInput("the character has died due to their injuries");
+                    Console.ReadLine();
+                    Environment.Exit(exitCode);
                     return "You have died! Game Over.";
                 } 
 
@@ -289,15 +292,18 @@ public class AdventureGenerator
                 Console.WriteLine(chapterThreeConclusion);
                 if (newPlayer.Health > 0)
                 {
-                    Console.WriteLine("Would you like to continue ? (5)");
-                    int response = int.Parse(Console.ReadLine());
-                    if (response == 5) {
+                    Console.WriteLine("Would you like to continue ? (chapter four)");
+                    string response = Console.ReadLine();
+                    if (response == "chapter four") {
+                        ReadyForChapterFour = true;
                         ChapterFourAsync();
                         return "";
-                    } 
+                    }  else
+                    {
                     Console.WriteLine("the adventure continues... one moment...");
                     var result = await chat.GetResponseFromChatbotAsync();
                     return result;
+                    }
                 } else
                 {
                     return "u dead";
@@ -305,9 +311,7 @@ public class AdventureGenerator
            
             }
 
-
         }
-
 
         async Task<string> ChapterFourAsync() // side quest
         {
@@ -331,10 +335,7 @@ public class AdventureGenerator
         async Task<string> FirstSideQuest() //
         {
 
-            newPlayer.Speed = player.Speed;
-            newPlayer.Magic = player.Magic;
-            newPlayer.Strength = player.Strength;
-
+            newPlayer = player;
             chat.AppendUserInput("the player has chosen to accept a side quest to help an npc, using skill to solve a mystery .. four sentences");
             Console.WriteLine($"Speed: {newPlayer.Speed}, Magic: {newPlayer.Magic}, Strength: {newPlayer.Strength}");
             if (newPlayer.Speed + newPlayer.Strength + newPlayer.Magic > new Random().Next(0, 6))
