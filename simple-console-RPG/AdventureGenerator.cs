@@ -186,7 +186,7 @@ public class AdventureGenerator
                         chat.AppendUserInput($"characters encounter and must fight the enemy,"
                             + $"they battle in the {Setting} but the battle is {CombatDescription}"
                             + $"player has decided becuase of motive to fight typeof:  [single, singular] {EnemyAi} using their typeof: {Goal}"
-                            + $"continue the story, player takes some damage in battle, they navigate {Setting} to defeat {EnemyAi} ...two sentences");
+                            + $"continue the story, player takes some damage in battle, they navigate {Setting} to defeat {EnemyAi} ...four sentences");
 
                         newPlayer.Health = player.Health - enemyStrengthLevel;
 
@@ -200,7 +200,7 @@ public class AdventureGenerator
                         chat.AppendUserInput($"continue the story.. characters struggle to fight {EnemyAi},"
                        + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
                        + "due to speed character takes minor damage, and deals with an injury"
-                       + $"luckily, they use their speed to evade the enemy.. they navigate the {Setting} and get away!"
+                       + $"luckily, they use their speed to {dodgeVerbs[new Random().Next(0, 10)]} the enemy.. they navigate the {Setting} and get away!"
                        + $"speed has helped the character escape the evil {EnemyAi}.. the journey continues ..three sentences");
                         newPlayer.Health = player.Health;
                         newPlayer.Health = newPlayer.Health - 4;
@@ -210,11 +210,15 @@ public class AdventureGenerator
 
 
                     case Scenario.MagicBased:
+                        Console.WriteLine("You prepare your magic to defeat the upcoming enemy.");
                         newPlayer.Health = player.Health;
                         newPlayer.Health = newPlayer.Health - new Random().Next(0, 10);
+                        Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
                         chat.AppendUserInput($"continue the story.. characters encounter and must fight one of the {EnemyAi},"
-                         + "they take damage and is injured!.."
-                         + $"they battle in the {Setting} but the battle is {CombatDescription}, they character uses a magic spell blast to fight and win.. two sentences");
+                         + "the player take damage and is injured!.."
+                         + $"player struggles in battle but use their {magicSpells[new Random().Next(0, 8)]}"
+                         + $"player is battling in this {Setting} now uses more magic abilities and {magicSpells[new Random().Next(0, 8)]}!.."
+                         + $"the battle is {CombatDescription}, they try relentlessly to defeat this {EnemyAi}.. four sentences");
                         var endMagicScenario = await chat.GetResponseFromChatbotAsync();
                         ChapterTwoComplete = true;
                         return endMagicScenario;
@@ -350,11 +354,12 @@ public class AdventureGenerator
 
         async Task<string> FirstSideQuest() //
         {
-            Console.WriteLine($"You have {newPlayer.Health} remaining");
+
             chat.AppendUserInput("the player has chosen to accept a side quest to help an npc, using skill to solve a mystery .. four sentences");
             if (newPlayer.Speed + newPlayer.Strength + newPlayer.Magic > new Random().Next(0, 6))
             {
                 // decide on how much to heal player
+                Console.WriteLine($"You have {newPlayer.Health} remaining");
                 Console.WriteLine("You have found a magic berry that heals your health! + 5 health");
                 Console.WriteLine("Your bravery in adventure has been rewarded, you now have have plus +2 Strengh +1 Speed");
 
@@ -367,6 +372,7 @@ public class AdventureGenerator
                 return " ";
             } else if (newPlayer.Luck > 4)
             {
+                Console.WriteLine($"You have {newPlayer.Health} remaining");
                 Console.WriteLine("You were too weak to fight, yet luckily, magically have found a magic potion that heals your health! + 15 health");
                 Console.WriteLine("Your bravery in adventure has been rewarded, you now have have plus +5 magic +1 strength");
 
@@ -379,6 +385,7 @@ public class AdventureGenerator
                 return " ";
             } else
             {
+                Console.WriteLine($"You have 0 HP remaining...");
                 Console.WriteLine("You were neither strong or lucky enough to sruvive this quest young warrior... you have fallen in battle.");
                 Console.WriteLine("You have lost! Game Over.");
                 Console.ReadLine();
