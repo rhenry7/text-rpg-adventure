@@ -144,17 +144,18 @@ public class CharacterStats
 
     }
 
-     public void RollDiceOptions()
+    public void RollDiceOptions()
     {
 
         Console.WriteLine("Would you like to roll the dice...");
         Console.WriteLine("2 - for yes");
         Console.WriteLine("1 - for no");
         RollDiceChoice = Console.ReadLine();
-        if(RollDiceChoice == "2")
+        if (RollDiceChoice == "2")
         {
-        Console.WriteLine("\n");
-        } else
+            Console.WriteLine("\n");
+        }
+        else
         {
             Console.WriteLine("you suck");
 

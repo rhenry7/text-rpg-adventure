@@ -13,11 +13,13 @@ public class PlayerStats
 
     public void UpdateStats(int[] statsValues, string playerName, string playerClass)
     {
+        // physical  attributes
         Health = statsValues[0] * 10;
         Speed = statsValues[1];
         Strength = statsValues[2];
         Magic = statsValues[3];
         Luck = statsValues[4];
+        // character bio
         Name = playerName;
         PlayerClass = playerClass;
     }
