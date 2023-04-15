@@ -193,7 +193,7 @@ public class AdventureGenerator
                 chat.AppendUserInput($"characters encounter and must fight the enemy,"
                 +  $"they battle in the {Setting} but the battle is {CombatDescription}" 
                 + $"player has decided becuase of motive to fight typeof:  [single, singular] {EnemyAi} using their typeof: {Goal}"
-                + $"continue the story, player takes some damage in battle, they navigate {Setting} to defeat {EnemyAi} ...three sentences");
+                + $"continue the story, player takes some damage in battle, they navigate {Setting} to defeat {EnemyAi} ...two sentences");
       
                 newPlayer.Health = player.Health - enemyStrengthLevel ;
          
@@ -202,9 +202,20 @@ public class AdventureGenerator
                 var endOfChapter = await chat.GetResponseFromChatbotAsync();
                 ChapterTwoComplete = true;
                 return endOfChapter;
-            }
+                }
+                else if (player.Magic > 5)
+                {
+                    newPlayer.Health = player.Health;
+                    newPlayer.Health = newPlayer.Health - new Random().Next(0, 10);
+                    chat.AppendUserInput($"continue the story.. characters encounter and must fight the {EnemyAi},"
+                     + "they take damage and is injured!.."
+                     + $"they battle in the {Setting} but the battle is {CombatDescription}, they character uses a magic spell blast to fight and win.. two sentences");
+                    var endOfChapter = await chat.GetResponseFromChatbotAsync();
+                    ChapterTwoComplete = true;
+                    return endOfChapter;
 
-            if (player.Strength < 5)
+                }
+                else if (player.Strength < 5)
             {
                 Console.WriteLine($"because character has level strength: {player.Strength}, they were NOT able to defeat {EnemyAi}");
                 newPlayer.Health = player.Health;
@@ -212,19 +223,22 @@ public class AdventureGenerator
                 Console.WriteLine($"You lost 5 HP");
                     chat.AppendUserInput($"the character has taken heavy damage in their battle against {EnemyAi}"
                         + $"now, the character must use their skills to defeat the [single, singular] {EnemyAi}"
-                        + $"the {EnemyAi} has been strong, and the character has been injured .. three short sentences");
+                        + $"the {EnemyAi} has been strong, and the character has been injured .. two short sentences");
                 Console.WriteLine($"You have {newPlayer.Health} HP remaining");
                 Console.WriteLine("You have been wounded! but you survive and must march on...");
                 var endOfChapter = await chat.GetResponseFromChatbotAsync();
                 ChapterTwoComplete = true;
                 return endOfChapter;
-            }
-
+            }   else
+                {
+                    return "should not be here";
+                }
+             
 
             }
             else
             {
-                if (player.Speed > enemySpeedLevel)
+                if (player.Speed > 5)
                 {
                     chat.AppendUserInput($"continue the story.. characters struggle to fight {EnemyAi},"
                     + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
@@ -237,7 +251,7 @@ public class AdventureGenerator
                     ChapterTwoComplete = true;
                     return endOfChapter;
                 }
-                else if (player.Magic > enemyStrengthLevel)
+                else if (player.Magic > 5)
                 {
                     newPlayer.Health = player.Health;
                     newPlayer.Health = newPlayer.Health - new Random().Next(0, 10);
@@ -256,7 +270,7 @@ public class AdventureGenerator
                 }
             }
 
-            return "should not be here, fix me right now!! (outside of combat loop)";
+           // return "should not be here, fix me right now!! (outside of combat loop)";
         }
 
         async Task<string> ChapterThreeAsync()
@@ -294,7 +308,7 @@ public class AdventureGenerator
                 +" they are suprised an attacked by random enemy"
                 + $" character now only has {newPlayer.Health}  health points remaining"
                 + $" player has strong emotional reaction to the {EnemyGoal}"
-                + $" player encounters the leader {enemyLeaderArray[new Random().Next(0, 9)]} + {EnemyAi}.. three sentences");
+                + $" player encounters the leader {enemyLeaderArray[new Random().Next(0, 9)]} + {EnemyAi}.. two sentences");
                 var chapterThreeConclusion = await chat.GetResponseFromChatbotAsync();
                 Console.WriteLine(chapterThreeConclusion);
                 if (newPlayer.Health > 0)
@@ -328,7 +342,7 @@ public class AdventureGenerator
             if(questResponse == 6)
              {
                 Console.WriteLine("a new side mission begins... one moment...");
-                chat.AppendUserInput("the player has chosen to accept a side quest to help an npc .. three sentences");
+                chat.AppendUserInput("the player has chosen to accept a side quest to help an npc .. two sentences");
                 //string response = "you suck";
                 return "";
             }
