@@ -5,7 +5,6 @@ using simple_console_RPG;
 //using Internal;
 public class CharacterStats
 
-
 {
     // character basics
     public string? Name { get; set; }
@@ -127,6 +126,10 @@ public class CharacterStats
             int secondChoice = int.Parse(Console.ReadLine()); // enter 3
             string chapterThree = story.GenerateAdventure(null, null, null, secondChoice, playerStats).Result;
             Console.WriteLine(chapterThree);
+            Console.WriteLine("What will you do now?... (4) \n");
+            int thirdChoice = int.Parse(Console.ReadLine()); // enter 4
+            string chapterFour = story.GenerateAdventure(null, null, null, thirdChoice, playerStats).Result;
+            Console.WriteLine(chapterFour);
 
             return elf;
         }
