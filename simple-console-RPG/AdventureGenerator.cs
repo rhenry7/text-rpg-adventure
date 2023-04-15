@@ -12,6 +12,8 @@ public class AdventureGenerator
     public string[] enemyLeaderArray = new string[] { "Council of Elves", "Immortal Wizard", "Tribal Cheiftan", "The forgotten King", "The Dragon shapeshifter", "Prideful General", "The Mad King", "High Priests", "Ancient Pirate King" };
     public string[] locationArray = new string[] { "Castle", "Forest", "Desert", "Swamp", "Rainy Dungeon", "Grassy Village", "Mountain", "Volcano", "Ice Kingdom", "Jungle" };
     public string[] objectiveArray = new string[] { "Save the princess", "Find the keys to the hidden kingdom", "Defeat the emperor", "find who killed your father", "solve the puzzle of the time treasure", "Heal the ancient tree", "uncover the corruption in the city", "help the rebels free their people", "Vanquish the wizard", "Destroy the magic orb" };
+    // NPC's
+    public string[] npcArray = new string[] { "Wise old person", "young child", "lost banker" };
     // specifics for enemy, locations or objective
     public string[] enemyMotivationArray = new string[] {
         "Environmentalism: The enemy is an environmental extremist who believes that humans are destroying the planet and seeks to stop them at any cost.",
@@ -191,7 +193,7 @@ public class AdventureGenerator
                 chat.AppendUserInput($"characters encounter and must fight the enemy,"
                 +  $"they battle in the {Setting} but the battle is {CombatDescription}" 
                 + $"player has decided becuase of motive to fight typeof:  [single, singular] {EnemyAi} using their typeof: {Goal}"
-                + $"continue the story, player takes some damage in battle, they navigate {Setting} to defeat {EnemyAi} ...four sentences");
+                + $"continue the story, player takes some damage in battle, they navigate {Setting} to defeat {EnemyAi} ...three sentences");
       
                 newPlayer.Health = player.Health - enemyStrengthLevel ;
          
@@ -228,7 +230,7 @@ public class AdventureGenerator
                     + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
                     + "due to speed character takes minor damage, and deals with an injury"
                     + $"luckily, they use their speed to evade the enemy.. they navigate the {Setting} and get away!"
-                    + $"speed has helped the character escape the evil {EnemyAi}.. the journey continues ..five sentences");
+                    + $"speed has helped the character escape the evil {EnemyAi}.. the journey continues ..three sentences");
                     newPlayer.Health = player.Health;
                     newPlayer.Health = newPlayer.Health - 4;
                     var endOfChapter = await chat.GetResponseFromChatbotAsync();
@@ -292,12 +294,15 @@ public class AdventureGenerator
                 +" they are suprised an attacked by random enemy"
                 + $" character now only has {newPlayer.Health}  health points remaining"
                 + $" player has strong emotional reaction to the {EnemyGoal}"
-                + $" player encounters the leader {enemyLeaderArray[new Random().Next(0, 9)]} + {EnemyAi}.. one paragraph");
+                + $" player encounters the leader {enemyLeaderArray[new Random().Next(0, 9)]} + {EnemyAi}.. three sentences");
+                var chapterThreeConclusion = await chat.GetResponseFromChatbotAsync();
+                Console.WriteLine(chapterThreeConclusion);
                 if (newPlayer.Health > 0)
                 {
                     Console.WriteLine("Would you like to continue ? (5)");
                     int response = int.Parse(Console.ReadLine());
                     if (response == 5) ChapterFourAsync();
+                    Console.WriteLine("the adventure continues... one moment...");
                     var result = await chat.GetResponseFromChatbotAsync();
                     return result;
                 } else
@@ -318,11 +323,12 @@ public class AdventureGenerator
         async Task<string> ChapterFourAsync() // side quest
         {
             Console.WriteLine("Suddenly... a strange figure approaches..");
-            Console.WriteLine("it is a random character! they offer you a quest do you accept?");
+            Console.WriteLine("it is a random character! they offer you a quest do you accept? (6)");
             int questResponse = int.Parse(Console.ReadLine());
             if(questResponse == 6)
              {
-                chat.AppendUserInput("the player has chosen to accept a side quest to help an npc");
+                Console.WriteLine("a new side mission begins... one moment...");
+                chat.AppendUserInput("the player has chosen to accept a side quest to help an npc .. three sentences");
                 //string response = "you suck";
                 return "";
             }
