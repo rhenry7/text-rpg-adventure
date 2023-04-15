@@ -1,6 +1,4 @@
-﻿using System;
-using OpenAI_API;
-
+﻿
 namespace simple_console_RPG
 {
 	public class StoryAng
