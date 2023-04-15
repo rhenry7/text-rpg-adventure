@@ -117,8 +117,8 @@ public class AdventureGenerator
         var chat = api.Chat.CreateConversation();
         PlayerStats newPlayer = new PlayerStats();
         chat.AppendSystemMessage("add to a dungeons and dragons storyline, adventure game, based on [AppendUserInput]"
-            + "write in the style of [George RR Martin, The Bible, Tolkein, Robert E. Howard, C.S. Lewis, J.K. Rowling, Michael Moorcock]"
-            + "use humor and the stats of character to update the story.");
+            + "write in the style of [George RR Martin, The Bible, Tolkein, C.S. Lewis, ]"
+            + "use stats of character to update the story.");
 
 
         if (DiceRollOne.HasValue && DiceRollTwo.HasValue && DiceRollThree.HasValue)
@@ -130,6 +130,11 @@ public class AdventureGenerator
             CombatDescription = combatAdverbs[new Random().Next(0, 10)];
         }
 
+        //await chat.StreamResponseFromChatbotAsync(res =>
+        //{
+        //    Console.Write(res);
+        //});
+
         switch (Choice)
         {
             case "chapter two":
@@ -139,6 +144,7 @@ public class AdventureGenerator
                 return "";
             case "chapter three":
                 Console.WriteLine("Chapter Two complete...");
+                chat.AppendExampleChatbotOutput("the first two chapters of the adventure are complete");
                 string chapterThree = await ChapterThreeAsync();
                 Console.WriteLine(chapterThree);
                 Console.ReadLine();
@@ -258,6 +264,7 @@ public class AdventureGenerator
                  + $"they navigate the {Setting} and use their magic {CombatDescription}, they character uses their magic to solve a mystery in the {Setting} in order to stop main {EnemyAi}.. four sentences");
                 var endOfChapter = await chat.GetResponseFromChatbotAsync();
                 ChapterTwoComplete = true;
+                ChapterFourAsync();
                 return endOfChapter;
 
             } else
@@ -323,6 +330,10 @@ public class AdventureGenerator
 
         async Task<string> FirstSideQuest() //
         {
+
+            newPlayer.Speed = player.Speed;
+            newPlayer.Magic = player.Magic;
+            newPlayer.Strength = player.Strength;
 
             chat.AppendUserInput("the player has chosen to accept a side quest to help an npc, using skill to solve a mystery .. four sentences");
             Console.WriteLine($"Speed: {newPlayer.Speed}, Magic: {newPlayer.Magic}, Strength: {newPlayer.Strength}");

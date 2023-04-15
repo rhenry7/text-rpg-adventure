@@ -116,10 +116,10 @@ public class CharacterStats
             Console.WriteLine("one moment while we create your story... \n");
             string userStory = story.GenerateAdventure(diceRollOne, diceRolltwo, diceRollthree, null, playerStats).Result;
             Console.WriteLine(userStory);
-            Console.WriteLine("What will you do?...  (chapter one) \n");
-            string firstChoice = Console.ReadLine(); // 
-            string chapterTwo = story.GenerateAdventure(null, null, null, firstChoice, playerStats).Result;
-            Console.WriteLine(chapterTwo); 
+            //Console.WriteLine("What will you do?...  (chapter one) \n");
+            //string firstChoice = Console.ReadLine(); // 
+            //string chapterTwo = story.GenerateAdventure(null, null, null, firstChoice, playerStats).Result;
+            //Console.WriteLine(chapterTwo); 
             Console.WriteLine("What will you do now?... (chapter two) \n");
             string secondChoice = Console.ReadLine(); // enter 3
             string chapterThree = story.GenerateAdventure(null, null, null, secondChoice, playerStats).Result;
@@ -127,6 +127,7 @@ public class CharacterStats
             Console.WriteLine("What will you do now?... (chapter three) \n");
             string thirdChoice = Console.ReadLine(); // enter 4
             string chapterFour = story.GenerateAdventure(null, null, null, thirdChoice, playerStats).Result;
+            // player might need to accept in order for the sideQuest to work
             Console.WriteLine(chapterFour);
 
             return elf;
