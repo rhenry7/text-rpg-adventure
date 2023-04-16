@@ -148,7 +148,7 @@ public class AdventureGenerator
         OpenAIAPI api = new OpenAIAPI(text);
         var chat = api.Chat.CreateConversation();
         PlayerStats newPlayer = new PlayerStats();
-        // newPlayer = player;
+        newPlayer = player;
         Health = player.Health;
         Strength = player.Strength;
         Speed = player.Speed;
@@ -260,7 +260,7 @@ public class AdventureGenerator
                        + "due to speed character takes minor damage, and deals with an injury"
                        + $"luckily, they use their speed to {dodgeVerbs[new Random().Next(0, 10)]} the enemy.. they navigate the {Setting} and get away!"
                        + $"speed has helped the character escape the evil {EnemyAi}.. the journey continues ..four sentences");
-                        Health = -new Random().Next(0, 10);
+                        Health = Health - new Random().Next(0, 10);
                         var endSpeedScenario = await chat.GetResponseFromChatbotAsync();
                         ChapterTwoComplete = true;
                         return endSpeedScenario;
@@ -268,8 +268,8 @@ public class AdventureGenerator
 
                     case Scenario.MagicBased:
                         Console.WriteLine("You prepare your magic to defeat the upcoming enemy.");
-                        Health = -new Random().Next(0, 10);
-           
+                        Health = Health - new Random().Next(0, 10);
+
                         Console.WriteLine($"You have HP: {Health} remaining..");
                         chat.AppendUserInput($"continue the story.. characters encounter and must fight one of the {EnemyAi},"
                          + "the player take damage and is injured!.."
@@ -319,7 +319,7 @@ public class AdventureGenerator
             } else
             {
                 ChapterThreeComplete = true;
-                Health =- new Random().Next(0, 10) * 2;
+                Health = Health - new Random().Next(0, 10);
                 Console.WriteLine($"A fierce battle begins! You have HP: {Health} remaining");
                 if(Health == 0 || Health < 0)
                 {
@@ -330,7 +330,16 @@ public class AdventureGenerator
                     Console.ReadLine();
                     Environment.Exit(exitCode);
                     return "You have died! Game Over.";
-                } 
+                } else
+                {
+                    Console.WriteLine($"You have 0 HP remaining...");
+                    Console.WriteLine("You were neither strong or lucky enough to survive this quest young warrior... you have fallen in battle.");
+                    Console.WriteLine("You have lost! Game Over.");
+                    chat.AppendUserInput($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
+                    Console.ReadLine();
+                    Environment.Exit(exitCode);
+                    return " ";
+                }
 
                 Console.WriteLine("You have taken more damage!.. yet you still continue...");
                 chat.AppendUserInput($"continues the story.. from where it left off, the player continues to endure more of the battles,"
@@ -357,6 +366,13 @@ public class AdventureGenerator
                     }
                 } else
                 {
+                    Console.WriteLine($"You have 0 HP remaining...");
+                    Console.WriteLine("You were neither strong or lucky enough to survive this quest young warrior... you have fallen in battle.");
+                    Console.WriteLine("You have lost! Game Over.");
+                    chat.AppendUserInput($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
+                    Console.ReadLine();
+                    Environment.Exit(exitCode);
+                    return " ";
                     return "u dead";
                 }
            
