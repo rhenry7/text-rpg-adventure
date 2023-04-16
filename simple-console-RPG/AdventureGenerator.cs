@@ -227,7 +227,6 @@ public class AdventureGenerator
             if(combatChoice == "fight")
             {
                 Console.WriteLine("You have chosen to fight!!... prepare for the upcoming battle...");
-                Console.WriteLine($"player has {player.Strength} strength and {player.Health} HP, the other way has {Strength} strength, and {Health} HP");
                 Scenario scenario = player.Strength > 3 ? Scenario.StrengthBased :
                              player.Speed > 3 ? Scenario.SpeedBased :
                              player.Magic > 3 ? Scenario.MagicBased :
@@ -239,7 +238,7 @@ public class AdventureGenerator
                     case Scenario.StrengthBased:
                         string res = GenerateChapterOutline();
                         chat.AppendSystemMessage(res);
-                        chat.AppendUserInput($"characters encounter and must fight the enemy,"
+                        chat.AppendSystemMessage($"characters encounter and must fight the enemy,"
                             + $"they battle in the {Setting} but the battle is {CombatDescription}"
                             + "player uses strength skil to fight"
                             + $"player has decided becuase of motive to fight typeof:  [single, singular] {EnemyAi} using their typeof: {Goal}"
@@ -255,7 +254,7 @@ public class AdventureGenerator
 
                     case Scenario.SpeedBased:
                         Console.WriteLine("Speed based character...");
-                        chat.AppendUserInput($"continue the story.. characters struggle to fight {EnemyAi},"
+                        chat.AppendSystemMessage($"continue the story.. characters struggle to fight {EnemyAi},"
                        + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
                        + "due to speed character takes minor damage, and deals with an injury"
                        + $"luckily, they use their speed to {dodgeVerbs[new Random().Next(0, 10)]} the enemy.. they navigate the {Setting} and get away!"
@@ -271,7 +270,7 @@ public class AdventureGenerator
                         Health = Health - new Random().Next(0, 10);
 
                         Console.WriteLine($"You have HP: {Health} remaining..");
-                        chat.AppendUserInput($"continue the story.. characters encounter and must fight one of the {EnemyAi},"
+                        chat.AppendSystemMessage($"continue the story.. characters encounter and must fight one of the {EnemyAi},"
                          + "the player take damage and is injured!.."
                          + $"the battle is {CombatDescription} but the player use their {magicSpells[new Random().Next(0, 8)]}"
                          + $"player is battling in this {Setting} now uses more magic abilities and {magicSpells[new Random().Next(0, 8)]}!.."
@@ -301,7 +300,7 @@ public class AdventureGenerator
         {
             if(player.Luck >= 7)
             {
-           chat.AppendUserInput($"They survive an attack against {EnemyAi},"
+           chat.AppendSystemMessage($"They survive an attack against {EnemyAi},"
          + $"in the {Setting}, the player finds a lucky: weapon. "
          + $" {player.Name} miracously achieves the {Goal}, with the help of a legendary warrior who happened to be in {Setting}"
          + $"  ...one paragraph");
@@ -325,28 +324,18 @@ public class AdventureGenerator
                 {
                     Console.WriteLine("You were neither strong or lucky enough to survive this quest young warrior... you have fallen in battle.");
                     Console.WriteLine("You have lost! Game Over.");
-                    chat.AppendUserInput($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
+                    chat.AppendSystemMessage($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
                     chat.AppendUserInput("the character has died due to their injuries");
                     Console.ReadLine();
                     Environment.Exit(exitCode);
                     return "You have died! Game Over.";
-                } else
-                {
-                    Console.WriteLine($"You have 0 HP remaining...");
-                    Console.WriteLine("You were neither strong or lucky enough to survive this quest young warrior... you have fallen in battle.");
-                    Console.WriteLine("You have lost! Game Over.");
-                    chat.AppendUserInput($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
-                    Console.ReadLine();
-                    Environment.Exit(exitCode);
-                    return " ";
                 }
 
                 Console.WriteLine("You have taken more damage!.. yet you still continue...");
-                chat.AppendUserInput($"continues the story.. from where it left off, the player continues to endure more of the battles,"
+                chat.AppendSystemMessage($"continues the story.. from where it left off, the player continues to endure more of the battles,"
                 + $" they are suprised an attacked by random {EnemyAi}"
                 + $" the player now only has {Health} health points remaining!"
                 + $" player has strong emotional reaction to the {EnemyGoal}"
-                // {enemyLeaderArray[new Random().Next(0, 9)]}
                 + $" player encounters the leader {EnemyAi} motivated by deep  {EnemyGoal} who wants to use the {Setting} for their goal.. two sentences");
                 var chapterThreeConclusion = await chat.GetResponseFromChatbotAsync();
                 Console.WriteLine(chapterThreeConclusion);
@@ -369,7 +358,7 @@ public class AdventureGenerator
                     Console.WriteLine($"You have 0 HP remaining...");
                     Console.WriteLine("You were neither strong or lucky enough to survive this quest young warrior... you have fallen in battle.");
                     Console.WriteLine("You have lost! Game Over.");
-                    chat.AppendUserInput($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
+                    chat.AppendSystemMessage($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
                     Console.ReadLine();
                     Environment.Exit(exitCode);
                     return " ";
@@ -390,10 +379,10 @@ public class AdventureGenerator
             if(questResponse == "accept")
              {
                 Console.WriteLine("a new side mission begins... one moment...");
-                chat.AppendUserInput("the player has chosen to accept a side quest to help an npc with a unique motivation .. two sentences");
+                chat.AppendSystemMessage("the player has chosen to accept a side quest to help an npc with a unique motivation .. two sentences");
                 Console.WriteLine("Press enter to continue to the side quest... ");
                 Console.ReadLine();
-                chat.AppendUserInput("the player has chosen to accept a side quest to help an npc, using skill to solve a mystery .. four sentences");
+                chat.AppendSystemMessage("the player has chosen to accept a side quest to help an npc, using skill to solve a mystery .. four sentences");
                 Console.WriteLine($"Speed: {player.Speed}, Magic: {player.Magic}, Strength: {player.Strength}");
                 if (player.Speed + player.Strength + player.Magic > new Random().Next(0, 6))
                 {
@@ -401,10 +390,13 @@ public class AdventureGenerator
                     Console.WriteLine($"You have {player.Health} remaining, second variable HP attempt: {Health}");
                     Console.WriteLine("You have found a magic berry that heals your health! + 5 health");
                     Console.WriteLine("Your bravery in adventure has been rewarded, you now have have plus +2 Strengh +1 Speed");
+                    chat.AppendSystemMessage($"the character has been rewarded for their kindness and bravery in helping a stranger in the {Setting}"
+                        + $"the stranger has rewarded the character with a berry to heal give renewed strength to defeat the {enemyGoal}"
+                        + $"the stranger points the player to the direction of where to defeat the leader of the {EnemyAi} and for the final battle");
 
-                    Health =+5;
-                    Strength =+ 2;
-                    Speed =+ 2;
+                    Health = Health + 5;
+                    Strength = Strength + 2;
+                    Speed = Speed + 2;
 
                     Console.WriteLine($"Health: {Health}, Strength: {Strength}, Speed: {Speed}");
                     chat.AppendUserInput("after solving the shocking mystery, player is rewarded! .. two short sentences");
@@ -416,9 +408,9 @@ public class AdventureGenerator
                     Console.WriteLine("You were too weak to fight, yet luckily, magically have found a magic potion that heals your health! + 15 health");
                     Console.WriteLine("Your bravery in adventure has been rewarded, you now have have plus +5 magic +1 strength");
 
-                    Health =+ 15;
-                    Magic =+ 5;
-                    Strength =+ 1;
+                    Health = Health + 15;
+                    Magic = Magic + 5;
+                    Strength = Strength + 1;
 
                     Console.WriteLine($"Health: {Health}, Magic: {Magic}, Strength: {Strength}");
                     chat.AppendUserInput("player did not use magic, or speed or strength to solve the mystery, they used luck! some how they player helped and recieve a reward! .. three sentences");
