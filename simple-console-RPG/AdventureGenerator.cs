@@ -59,6 +59,26 @@ public class AdventureGenerator
     private string enemyGoal { get; set; }
     private string _combatDescription { get; set; }
 
+    public int Health { get; set; }
+
+    public int HP { get; set; }
+
+    public int Speed { get; set; }
+
+    public int Strength { get; set; }
+
+    public int Range { get; set; }
+
+    public int Magic { get; set; }
+
+    public int Luck { get; set; }
+
+    public int Level { get; set; }
+
+    public int EXP { get; set; }
+
+    public int Dice { get; set; }
+
     private bool ChapterOneComplete
     {
         get => _chapterOneComplete;
@@ -113,6 +133,13 @@ public class AdventureGenerator
         set => _combatDescription = value;
     }
 
+
+    public string GenerateChapterOutline()
+    {
+        return "";
+    }
+
+
     // dont need three dice rolls, one can do the job..
     public async Task<string> GenerateAdventure(int? DiceRollOne, int? DiceRollTwo, int? DiceRollThree, string? Choice, PlayerStats player) // int Location, int Enemy, int Objective
     {
@@ -121,6 +148,14 @@ public class AdventureGenerator
         OpenAIAPI api = new OpenAIAPI(text);
         var chat = api.Chat.CreateConversation();
         PlayerStats newPlayer = new PlayerStats();
+        // newPlayer = player;
+        Health = player.Health;
+        Strength = player.Strength;
+        Speed = player.Speed;
+        Magic = player.Magic;
+        Luck = player.Luck;
+
+
         chat.AppendSystemMessage("add to a dungeons and dragons storyline, adventure game, based on [AppendUserInput]"
             + "write in the style of [George RR Martin, The Bible, Tolkein, C.S. Lewis, ]"
             + "use stats of character to update the story.");
@@ -133,6 +168,13 @@ public class AdventureGenerator
             Goal = objectiveArray[(int)DiceRollThree];
             EnemyGoal = enemyMotivationArray[new Random().Next(0, 10)];
             CombatDescription = combatAdverbs[new Random().Next(0, 10)];
+        }
+
+        string GenerateChapterOutline()
+        {
+            string chapterOneOutLine = $"in this phase of the story takes place in {Setting} and the player has just encountered and survived a battle with an {EnemyAi}"
+                + $"the battle was {CombatDescription} the player has strong feelings about stopping {EnemyGoal}";
+            return chapterOneOutLine;
         }
 
         //await chat.StreamResponseFromChatbotAsync(res =>
@@ -176,7 +218,7 @@ public class AdventureGenerator
         {
             int enemyStrengthLevel = new Random().Next(0, 4);
             int enemySpeedLevel = new Random().Next(0, 4);
-            chat.AppendUserInput($"The enemy objective is described more: {EnemyGoal} ...two sentences");
+            //chat.AppendUserInput($"The enemy objective is described more: {EnemyGoal} ...two sentences");
             Console.WriteLine($"An enemy approaches... Will you run or will you fight? ");
             Console.WriteLine("Enter `run` to run, or `fight` to fignt");
             // choose to run? or choose to fight!
@@ -185,6 +227,7 @@ public class AdventureGenerator
             if(combatChoice == "fight")
             {
                 Console.WriteLine("You have chosen to fight!!... prepare for the upcoming battle...");
+                Console.WriteLine($"player has {player.Strength} strength and {player.Health} HP, the other way has {Strength} strength, and {Health} HP");
                 Scenario scenario = player.Strength > 3 ? Scenario.StrengthBased :
                              player.Speed > 3 ? Scenario.SpeedBased :
                              player.Magic > 3 ? Scenario.MagicBased :
@@ -194,14 +237,17 @@ public class AdventureGenerator
                 switch (scenario)
                 {
                     case Scenario.StrengthBased:
+                        string res = GenerateChapterOutline();
+                        chat.AppendSystemMessage(res);
                         chat.AppendUserInput($"characters encounter and must fight the enemy,"
                             + $"they battle in the {Setting} but the battle is {CombatDescription}"
+                            + "player uses strength skil to fight"
                             + $"player has decided becuase of motive to fight typeof:  [single, singular] {EnemyAi} using their typeof: {Goal}"
-                            + $"continue the story, player takes some damage in battle, they navigate {Setting} to defeat {EnemyAi} ...four sentences");
+                            + $"continue the story, player takes some damage in the {CombatDescription} battle, they navigate {Setting} to defeat {EnemyAi} ...four sentences"); ;
 
-                        newPlayer.Health = player.Health - enemyStrengthLevel;
+                        Health = Health - new Random().Next(0, 10); ;
 
-                        Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
+                        Console.WriteLine($"You have HP: {Health} remaining");
                         Console.WriteLine($"You must use your strength to fight... \n");
                         var endStrengthScenario = await chat.GetResponseFromChatbotAsync();
                         ChapterTwoComplete = true;
@@ -214,8 +260,7 @@ public class AdventureGenerator
                        + "due to speed character takes minor damage, and deals with an injury"
                        + $"luckily, they use their speed to {dodgeVerbs[new Random().Next(0, 10)]} the enemy.. they navigate the {Setting} and get away!"
                        + $"speed has helped the character escape the evil {EnemyAi}.. the journey continues ..four sentences");
-                        newPlayer.Health = player.Health;
-                        newPlayer.Health = newPlayer.Health - 4;
+                        Health = -new Random().Next(0, 10);
                         var endSpeedScenario = await chat.GetResponseFromChatbotAsync();
                         ChapterTwoComplete = true;
                         return endSpeedScenario;
@@ -223,9 +268,9 @@ public class AdventureGenerator
 
                     case Scenario.MagicBased:
                         Console.WriteLine("You prepare your magic to defeat the upcoming enemy.");
-                        newPlayer.Health = player.Health;
-                        newPlayer.Health = newPlayer.Health - new Random().Next(0, 10);
-                        Console.WriteLine($"You have HP: {newPlayer.Health} remaining..");
+                        Health = -new Random().Next(0, 10);
+           
+                        Console.WriteLine($"You have HP: {Health} remaining..");
                         chat.AppendUserInput($"continue the story.. characters encounter and must fight one of the {EnemyAi},"
                          + "the player take damage and is injured!.."
                          + $"the battle is {CombatDescription} but the player use their {magicSpells[new Random().Next(0, 8)]}"
@@ -274,10 +319,9 @@ public class AdventureGenerator
             } else
             {
                 ChapterThreeComplete = true;
-                newPlayer.Health = player.Health;
-                newPlayer.Health = newPlayer.Health - new Random().Next(0, 10) * 2;
-                Console.WriteLine($"A fierce battle begins! You have HP: {newPlayer.Health} remaining");
-                if(newPlayer.Health == 0 || newPlayer.Health < 0)
+                Health =- new Random().Next(0, 10) * 2;
+                Console.WriteLine($"A fierce battle begins! You have HP: {Health} remaining");
+                if(Health == 0 || Health < 0)
                 {
                     Console.WriteLine("You were neither strong or lucky enough to survive this quest young warrior... you have fallen in battle.");
                     Console.WriteLine("You have lost! Game Over.");
@@ -291,7 +335,7 @@ public class AdventureGenerator
                 Console.WriteLine("You have taken more damage!.. yet you still continue...");
                 chat.AppendUserInput($"continues the story.. from where it left off, the player continues to endure more of the battles,"
                 + $" they are suprised an attacked by random {EnemyAi}"
-                + $" the player now only has {newPlayer.Health} health points remaining!"
+                + $" the player now only has {Health} health points remaining!"
                 + $" player has strong emotional reaction to the {EnemyGoal}"
                 // {enemyLeaderArray[new Random().Next(0, 9)]}
                 + $" player encounters the leader {EnemyAi} motivated by deep  {EnemyGoal} who wants to use the {Setting} for their goal.. two sentences");
@@ -303,6 +347,7 @@ public class AdventureGenerator
                     string response = Console.ReadLine();
                     if (response == "chapter four") {
                         ChapterFourComplete = true;
+                        ChapterFourAsync();
                         return "";
                     }  else
                     {
@@ -333,33 +378,33 @@ public class AdventureGenerator
                 Console.WriteLine("Press enter to continue to the side quest... ");
                 Console.ReadLine();
                 chat.AppendUserInput("the player has chosen to accept a side quest to help an npc, using skill to solve a mystery .. four sentences");
-                Console.WriteLine($"Speed: {newPlayer.Speed}, Magic: {newPlayer.Magic}, Strength: {newPlayer.Strength}");
-                if (newPlayer.Speed + newPlayer.Strength + newPlayer.Magic > new Random().Next(0, 6))
+                Console.WriteLine($"Speed: {player.Speed}, Magic: {player.Magic}, Strength: {player.Strength}");
+                if (player.Speed + player.Strength + player.Magic > new Random().Next(0, 6))
                 {
                     // decide on how much to heal player
-                    Console.WriteLine($"You have {newPlayer.Health} remaining");
+                    Console.WriteLine($"You have {player.Health} remaining, second variable HP attempt: {Health}");
                     Console.WriteLine("You have found a magic berry that heals your health! + 5 health");
                     Console.WriteLine("Your bravery in adventure has been rewarded, you now have have plus +2 Strengh +1 Speed");
 
-                    newPlayer.Health = newPlayer.Health + 5;
-                    newPlayer.Strength = newPlayer.Strength + 2;
-                    newPlayer.Speed = newPlayer.Speed + 2;
+                    Health =+5;
+                    Strength =+ 2;
+                    Speed =+ 2;
 
-                    Console.WriteLine($"Health: {newPlayer.Health + 10}, Strength: {newPlayer.Strength + 2}, Speed: {newPlayer.Speed + 1}");
+                    Console.WriteLine($"Health: {Health}, Strength: {Strength}, Speed: {Speed}");
                     chat.AppendUserInput("after solving the shocking mystery, player is rewarded! .. two short sentences");
                     return " ";
                 }
                 else if (newPlayer.Luck > 4)
                 {
-                    Console.WriteLine($"You have {newPlayer.Health} remaining");
+                    Console.WriteLine($"You have {Health} remaining");
                     Console.WriteLine("You were too weak to fight, yet luckily, magically have found a magic potion that heals your health! + 15 health");
                     Console.WriteLine("Your bravery in adventure has been rewarded, you now have have plus +5 magic +1 strength");
 
-                    newPlayer.Health = newPlayer.Health + 15;
-                    newPlayer.Magic = newPlayer.Magic + 5;
-                    newPlayer.Strength = newPlayer.Strength + 1;
+                    Health =+ 15;
+                    Magic =+ 5;
+                    Strength =+ 1;
 
-                    Console.WriteLine($"Health: {newPlayer.Health}, Magic: {player.Magic}, Strength: {player.Strength}");
+                    Console.WriteLine($"Health: {Health}, Magic: {Magic}, Strength: {Strength}");
                     chat.AppendUserInput("player did not use magic, or speed or strength to solve the mystery, they used luck! some how they player helped and recieve a reward! .. three sentences");
                     return " ";
                 }
