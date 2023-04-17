@@ -309,7 +309,7 @@ public class AdventureGenerator
             }
             else if (player.Magic > 6)
             {
-                chat.AppendUserInput($"continue the story.. characters feel emotion about {EnemyGoal},"
+                chat.AppendSystemMessage($"continue the story.. characters feel emotion about {EnemyGoal},"
                  + $"they navigate the {Setting} and use their magic {CombatDescription}, they character uses their magic to solve a mystery in the {Setting} in order to stop main {EnemyAi}.. four sentences");
                 var endOfChapter = await chat.GetResponseFromChatbotAsync();
                 ChapterThreeComplete = true;
@@ -387,25 +387,39 @@ public class AdventureGenerator
                 if (player.Speed + player.Strength + player.Magic > new Random().Next(0, 6))
                 {
                     // decide on how much to heal player
-                    Console.WriteLine($"You have {player.Health} remaining, second variable HP attempt: {Health}");
-                    Console.WriteLine("You have found a magic berry that heals your health! + 5 health");
-                    Console.WriteLine("Your bravery in adventure has been rewarded, you now have have plus +2 Strengh +1 Speed");
+                    string apikeyFilePath = "apikey.txt";
+                    string text = File.ReadAllText(apikeyFilePath);
+                    OpenAIAPI api = new OpenAIAPI(text);
+                    var chat = api.Chat.CreateConversation();
+                    PlayerStats newPlayer = new PlayerStats();
+
                     chat.AppendSystemMessage($"the character has been rewarded for their kindness and bravery in helping a stranger in the {Setting}"
                         + $"the stranger has rewarded the character with a berry to heal give renewed strength to defeat the {enemyGoal}"
                         + $"the stranger points the player to the direction of where to defeat the leader of the {EnemyAi} and for the final battle");
+                    Console.WriteLine($"You have entered the encounter with {Health} HP.");
+                    await Task.Delay(2000);
+                    Console.WriteLine("You have found a magic berry that heals your health! + 5 health");
+                    await Task.Delay(3000);
+
+                    Console.WriteLine("Your bravery in adventure has been rewarded, you now have have plus +2 Strengh +2 Speed");
 
                     Health = Health + 5;
                     Strength = Strength + 2;
                     Speed = Speed + 2;
-
+                    await Task.Delay(4000);
                     Console.WriteLine($"Health: {Health}, Strength: {Strength}, Speed: {Speed}");
-                    chat.AppendUserInput("after solving the shocking mystery, player is rewarded! .. two short sentences");
-                    return " ";
+                    chat.AppendSystemMessage("after solving the shocking mystery, player is rewarded in ! .. two short sentences");
+                    string response = await chat.GetResponseFromChatbotAsync();
+                    Console.WriteLine(response);
+                    return response;
                 }
                 else if (newPlayer.Luck > 4)
                 {
+                    await Task.Delay(1000);
                     Console.WriteLine($"You have {Health} remaining");
+                    await Task.Delay(2000);
                     Console.WriteLine("You were too weak to fight, yet luckily, magically have found a magic potion that heals your health! + 15 health");
+                    await Task.Delay(3000);
                     Console.WriteLine("Your bravery in adventure has been rewarded, you now have have plus +5 magic +1 strength");
 
                     Health = Health + 15;
