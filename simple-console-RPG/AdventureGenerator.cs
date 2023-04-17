@@ -177,11 +177,6 @@ public class AdventureGenerator
             return chapterOneOutLine;
         }
 
-        //await chat.StreamResponseFromChatbotAsync(res =>
-        //{
-        //    Console.Write(res);
-        //});
-
         switch (Choice)
         {
             case "chapter two":
@@ -219,13 +214,16 @@ public class AdventureGenerator
             int enemyStrengthLevel = new Random().Next(0, 4);
             int enemySpeedLevel = new Random().Next(0, 4);
             //chat.AppendUserInput($"The enemy objective is described more: {EnemyGoal} ...two sentences");
+            await Task.Delay(1000);
             Console.WriteLine($"An enemy approaches... Will you run or will you fight? ");
+            await Task.Delay(2000);
             Console.WriteLine("Enter `run` to run, or `fight` to fignt");
             // choose to run? or choose to fight!
             // "fight" to fight, "run" to run
             string combatChoice = Console.ReadLine();
             if(combatChoice == "fight")
             {
+                await Task.Delay(1000);
                 Console.WriteLine("You have chosen to fight!!... prepare for the upcoming battle...");
                 Scenario scenario = player.Strength > 3 ? Scenario.StrengthBased :
                              player.Speed > 3 ? Scenario.SpeedBased :
@@ -245,14 +243,16 @@ public class AdventureGenerator
                             + $"continue the story, player takes some damage in the {CombatDescription} battle, they navigate {Setting} to defeat {EnemyAi} ...four sentences"); ;
 
                         Health = Health - new Random().Next(0, 10); ;
-
+                        await Task.Delay(1000);
                         Console.WriteLine($"You have HP: {Health} remaining");
+                        await Task.Delay(2000);
                         Console.WriteLine($"You must use your strength to fight... \n");
                         var endStrengthScenario = await chat.GetResponseFromChatbotAsync();
                         ChapterTwoComplete = true;
                         return endStrengthScenario;
 
                     case Scenario.SpeedBased:
+                        await Task.Delay(1000);
                         Console.WriteLine("Speed based character...");
                         chat.AppendSystemMessage($"continue the story.. characters struggle to fight {EnemyAi},"
                        + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
@@ -266,10 +266,11 @@ public class AdventureGenerator
 
 
                     case Scenario.MagicBased:
-                        Console.WriteLine("You prepare your magic to defeat the upcoming enemy.");
+                        await Task.Delay(1000);
+                        Console.WriteLine("You prepare your magic to defeat the upcoming enemy...");
                         Health = Health - new Random().Next(0, 10);
-
-                        Console.WriteLine($"You have HP: {Health} remaining..");
+                        await Task.Delay(2000);
+                        Console.WriteLine($"You have HP: {Health} remaining...");
                         chat.AppendSystemMessage($"continue the story.. characters encounter and must fight one of the {EnemyAi},"
                          + "the player take damage and is injured!.."
                          + $"the battle is {CombatDescription} but the player use their {magicSpells[new Random().Next(0, 8)]}"
@@ -280,6 +281,7 @@ public class AdventureGenerator
                         return endMagicScenario;
 
                     case Scenario.Default:
+                        await Task.Delay(1000);
                         Console.WriteLine("you were quite unexceptional and have died. Game Over.");
                         Console.ReadLine();
                         Environment.Exit(exitCode);
@@ -330,13 +332,14 @@ public class AdventureGenerator
                     Environment.Exit(exitCode);
                     return "You have died! Game Over.";
                 }
-
+                await Task.Delay(1000);
                 Console.WriteLine("You have taken more damage!.. yet you still continue...");
                 chat.AppendSystemMessage($"continues the story.. from where it left off, the player continues to endure more of the battles,"
                 + $" they are suprised an attacked by random {EnemyAi}"
                 + $" the player now only has {Health} health points remaining!"
                 + $" player has strong emotional reaction to the {EnemyGoal}"
                 + $" player encounters the leader {EnemyAi} motivated by deep  {EnemyGoal} who wants to use the {Setting} for their goal.. two sentences");
+                // TODO: check if this is where the problem is?
                 var chapterThreeConclusion = await chat.GetResponseFromChatbotAsync();
                 Console.WriteLine(chapterThreeConclusion);
                 if (newPlayer.Health > 0)
@@ -345,7 +348,6 @@ public class AdventureGenerator
                     string response = Console.ReadLine();
                     if (response == "chapter four") {
                         ChapterFourComplete = true;
-                        ChapterFourAsync();
                         return "";
                     }  else
                     {
@@ -355,8 +357,11 @@ public class AdventureGenerator
                     }
                 } else
                 {
+                    await Task.Delay(1000);
                     Console.WriteLine($"You have 0 HP remaining...");
+                    await Task.Delay(1500);
                     Console.WriteLine("You were neither strong or lucky enough to survive this quest young warrior... you have fallen in battle.");
+                    await Task.Delay(2000);
                     Console.WriteLine("You have lost! Game Over.");
                     chat.AppendSystemMessage($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
                     Console.ReadLine();
