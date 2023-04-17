@@ -101,7 +101,6 @@ public class CharacterStats
 
             playerStats.UpdateStats(statsValues, Name, CharacterClass);
 
-
             Console.WriteLine("These are your stats!");
             Console.WriteLine($"Health: {playerStats.Health}");
             Console.WriteLine($"Speed: {playerStats.Speed}");
@@ -113,17 +112,25 @@ public class CharacterStats
             int diceRollOne = RollDice();
             int diceRolltwo = RollDice();
             int diceRollthree = RollDice();
+
             Console.WriteLine("one moment while we create your story... \n");
-            string userStory = story.GenerateAdventure(diceRollOne, diceRolltwo, diceRollthree, null, playerStats).Result;
-            Console.WriteLine(userStory);
+
+            string chapterOne = story.GenerateAdventure(diceRollOne, diceRolltwo, diceRollthree, null, playerStats).Result;
+            Console.WriteLine(chapterOne);
+
             Console.WriteLine("What will you do now?... (chapter two) \n");
-            string secondChoice = Console.ReadLine(); // enter 3
-            string chapterThree = story.GenerateAdventure(null, null, null, secondChoice, playerStats).Result;
+            string firstChoice = Console.ReadLine(); // enter 3
+            string chapterThree = story.GenerateAdventure(null, null, null, firstChoice, playerStats).Result;
             Console.WriteLine(chapterThree);
             Console.WriteLine("What will you do now?... (chapter three) \n");
-            string thirdChoice = Console.ReadLine(); // enter 4
-            string chapterFour = story.GenerateAdventure(null, null, null, thirdChoice, playerStats).Result;
-            // TODO: player might need to accept in order for the sideQuest to work
+            string secondChoice = Console.ReadLine(); // enter 4
+            string chapterFour = story.GenerateAdventure(null, null, null, secondChoice, playerStats).Result;
+            Console.WriteLine("What will you do now?... (chapter four) \n");
+            string thirdChoice = Console.ReadLine();
+            string chapterFive = story.GenerateAdventure(null, null, null, thirdChoice, playerStats).Result;
+            Console.WriteLine(chapterFive);
+
+
             Console.WriteLine(chapterFour);
 
             return elf;

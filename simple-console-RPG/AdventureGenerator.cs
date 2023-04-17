@@ -186,16 +186,14 @@ public class AdventureGenerator
                 return "";
             case "chapter three":
                 Console.WriteLine("Chapter Two complete...");
-                chat.AppendExampleChatbotOutput("the first two chapters of the adventure are complete");
+                //chat.AppendExampleChatbotOutput("the first two chapters of the adventure are complete");
                 string chapterThree = await ChapterThreeAsync();
                 Console.WriteLine(chapterThree);
-                Console.ReadLine();
-                return "you bravely continue..."; // create a chapter four
+                return ""; // create a chapter four
             case "chapter four":
                 Console.WriteLine("Chapter Three complete...");
                 string chapterFour = await ChapterFourAsync();
                 Console.WriteLine(chapterFour);
-                Console.ReadLine();
                 break;
             default:
                 chat.AppendSystemMessage(" generate adventure storyline for an RPG game! "
@@ -340,22 +338,9 @@ public class AdventureGenerator
                 + $" player has strong emotional reaction to the {EnemyGoal}"
                 + $" player encounters the leader {EnemyAi} motivated by deep  {EnemyGoal} who wants to use the {Setting} for their goal.. two sentences");
                 // TODO: check if this is where the problem is?
-                var chapterThreeConclusion = await chat.GetResponseFromChatbotAsync();
-                Console.WriteLine(chapterThreeConclusion);
-                if (newPlayer.Health > 0)
-                {
-                    Console.WriteLine("Would you like to continue ? (chapter four)");
-                    string response = Console.ReadLine();
-                    if (response == "chapter four") {
-                        ChapterFourComplete = true;
-                        return "";
-                    }  else
-                    {
-                    Console.WriteLine("the adventure continues... one moment...");
-                    var result = await chat.GetResponseFromChatbotAsync();
-                    return result;
-                    }
-                } else
+                string chapterThreeConclusion = await chat.GetResponseFromChatbotAsync();
+                ChapterFourComplete = true;
+                if(Health == 0 || Health < 0)
                 {
                     await Task.Delay(1000);
                     Console.WriteLine($"You have 0 HP remaining...");
@@ -366,8 +351,10 @@ public class AdventureGenerator
                     chat.AppendSystemMessage($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
                     Console.ReadLine();
                     Environment.Exit(exitCode);
-                    return " ";
-                    return "u dead";
+                    return "";
+                } else
+                {
+                    return chapterThreeConclusion;
                 }
            
             }
@@ -379,7 +366,6 @@ public class AdventureGenerator
             Console.WriteLine("Suddenly... a strange figure approaches..");
             Console.WriteLine("it is a random character! they offer you a quest do you accept? (6)");
             Console.WriteLine("Enter `deny` to deny, or `accept` to accept");
-
             string questResponse = Console.ReadLine();
             if(questResponse == "accept")
              {
@@ -399,8 +385,8 @@ public class AdventureGenerator
                     PlayerStats newPlayer = new PlayerStats();
 
                     chat.AppendSystemMessage($"the character has been rewarded for their kindness and bravery in helping a stranger in the {Setting}"
-                        + $"the stranger has rewarded the character with a berry to heal give renewed strength to defeat the {enemyGoal}"
-                        + $"the stranger points the player to the direction of where to defeat the leader of the {EnemyAi} and for the final battle");
+                        + $"the stranger has rewarded the character with a special kind of magical berry to heal give renewed strength to defeat the {enemyGoal}"
+                        + $"the stranger points the player to the direction of where to defeat the leader of the {EnemyAi} , continuing the story and for the final battle");
                     Console.WriteLine($"You have entered the encounter with {Health} HP.");
                     await Task.Delay(2000);
                     Console.WriteLine("You have found a magic berry that heals your health! + 5 health");
@@ -413,7 +399,7 @@ public class AdventureGenerator
                     Speed = Speed + 2;
                     await Task.Delay(4000);
                     Console.WriteLine($"Health: {Health}, Strength: {Strength}, Speed: {Speed}");
-                    chat.AppendSystemMessage("after solving the shocking mystery, player is rewarded in ! .. two short sentences");
+                    chat.AppendSystemMessage($"the characters journey in this {Setting} to defeat the {EnemyAi}! .. two short sentences");
                     string response = await chat.GetResponseFromChatbotAsync();
                     Console.WriteLine(response);
                     return response;
@@ -440,7 +426,7 @@ public class AdventureGenerator
                     Console.WriteLine($"You have 0 HP remaining...");
                     Console.WriteLine("You were neither strong or lucky enough to survive this quest young warrior... you have fallen in battle.");
                     Console.WriteLine("You have lost! Game Over.");
-                    chat.AppendUserInput($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
+                    chat.AppendUserInput($"Despite their best effort, the player has now died and failed their {Goal}, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
                     Console.ReadLine();
                     Environment.Exit(exitCode);
                     return " ";
