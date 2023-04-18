@@ -155,8 +155,7 @@ public class AdventureGenerator
 
         string storyparam = storyparams.TemplateForStory(Setting, EnemyAi, enemyElemental[random],  EnemyGoal, Goal);
         string secondPhase = storyparams.SecondPhase(Setting, EnemyAi, CombatDescription, random);
-        //Console.WriteLine("write the params");
-        //return storyparam;
+
 
         chat.AppendSystemMessage("roleplay as a dungeon master, story teller to a dungeons and dragons storyline, adventure game"
             + "tell a dramatic and poetic heartful adventure"
@@ -196,17 +195,19 @@ public class AdventureGenerator
         {
             int enemyStrengthLevel = new Random().Next(0, 4);
             int enemySpeedLevel = new Random().Next(0, 4);
-            //chat.AppendUserInput($"The enemy objective is described more: {EnemyGoal} ...two sentences");
+
             await Task.Delay(1000);
             Console.WriteLine($"An enemy approaches... Will you run or will you fight? ");
+
             await Task.Delay(2000);
             Console.WriteLine("Enter `run` to run, or `fight` to fignt");
-            // choose to run? or choose to fight!
-            // "fight" to fight, "run" to run
             string combatChoice = Console.ReadLine();
+
             if(combatChoice == "fight")
             {
                 await Task.Delay(1000);
+                chat.AppendSystemMessage(secondPhase);
+
                 Console.WriteLine("You have chosen to fight!!... prepare for the upcoming battle...");
                 Scenario scenario = player.Strength > 3 ? Scenario.StrengthBased :
                              player.Speed > 3 ? Scenario.SpeedBased :
@@ -217,12 +218,11 @@ public class AdventureGenerator
                 switch (scenario)
                 {
                     case Scenario.StrengthBased:
-                        chat.AppendSystemMessage(secondPhase);
                         chat.AppendUserInput($"characters encounter and must fight the enemy,"
                             + $"they battle in the {Setting} but the battle is {CombatDescription}"
                             + $"player uses strength skil in the fight where the {EnemyAi} tried to {fight[random]} them"
                             + $"player has decided becuase of motive to fight typeof:  [single, singular] {EnemyAi} using their typeof: {Goal}"
-                            + $"continue the story, player takes some damage in the {CombatDescription} battle, they navigate {Setting} to defeat {EnemyAi} ...four sentences"); ;
+                            + $"continue the story, player takes some damage in the {CombatDescription} battle, they navigate {Setting} to defeat {EnemyAi}"); ;
 
                         Health = Health - new Random().Next(3, 10); ;
                         await Task.Delay(1000);
@@ -235,8 +235,12 @@ public class AdventureGenerator
 
                     case Scenario.SpeedBased:
                         await Task.Delay(1000);
-                        Console.WriteLine(EnemyAi);
-                        chat.AppendSystemMessage($"continue the story.. characters struggle to fight {EnemyAi},"
+                        Console.WriteLine("you have encountered a " + EnemyAi);
+                        Health = Health - new Random().Next(3, 10);
+                        await Task.Delay(1000);
+                        Console.WriteLine($"You have HP: {Health} remaining...");
+
+                        chat.AppendUserInput($"continue the story.. characters struggle to fight {EnemyAi},"
                        + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
                        + "due to speed character takes minor damage, and deals with an injury"
                        + $"luckily, they use their speed to {dodge[new Random().Next(0, 10)]} the enemy.. they navigate the {Setting} and get away!"
@@ -253,7 +257,7 @@ public class AdventureGenerator
                         Health = Health - new Random().Next(3, 10);
                         await Task.Delay(2000);
                         Console.WriteLine($"You have HP: {Health} remaining...");
-                        chat.AppendSystemMessage($"continue the story.. characters encounter and must fight one of the {EnemyAi},"
+                        chat.AppendUserInput($"continue the story.. characters encounter and must fight one of the {EnemyAi},"
                          + "the player take damage and is injured!.."
                          + $"the battle is {CombatDescription} but the player use their {magicSpell[new Random().Next(0, 8)]}"
                          + $"player is battling in this {Setting} now uses more magic abilities and {magicSpell[new Random().Next(0, 8)]}!.."
@@ -316,7 +320,7 @@ public class AdventureGenerator
                 }
                 await Task.Delay(1000);
                 Console.WriteLine("You have taken more damage!.. yet you still continue...");
-                chat.AppendSystemMessage($"continues the story.. from where it left off, the player continues to endure more of the battles,"
+                chat.AppendUserInput($"continues the story.. from where it left off, the player continues to endure more of the battles,"
                 + $" they are suprised an attacked by random {EnemyAi}"
                 + $" the player now only has {Health} health points remaining!"
                 + $" player has strong emotional reaction to the {EnemyGoal}"

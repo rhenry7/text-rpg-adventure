@@ -38,8 +38,6 @@
             return magicSpells;
 
         }
-
-        // Define other methods to return other arrays as needed
     }
 }
 

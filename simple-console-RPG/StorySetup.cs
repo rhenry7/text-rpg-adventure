@@ -10,23 +10,23 @@ namespace simple_console_RPG
 			string[] enemyArray = {
                 "Goblin Army",
                 "Evil Elves",
-                "Savage Wizards",
-                "religous orcs",
-                "zealous goblins",
+                "Wizards",
+                "orcs",
+                "goblins",
                 "Bandits",
                 "Vampires",
                 "Golemns",
                 "Ghost pirates",
                 "Mad Alchemists",
-                "Sand Lizard",
+                "Sand Lizards",
                 "Giant Spiders",
                 "Mutant Spiders",
                 "Mountain Barbarians",
                 "Undead Knights",
                 "Ghost Mercenaries",
-                "Lava Lizards with swords",
+                "Lava Lizards",
                 "Fire Dragon",
-                "Poison Spiders",
+                "Poisonous Spiders",
                 "Orcs",
                 "Giants",
                 "Ice Dragon"};
@@ -37,23 +37,52 @@ namespace simple_console_RPG
 
         {
 
-			string[] enemyLeaderArray = new string[] { "Council of Elves", "Immortal Wizard", "Tribal Cheiftan", "The forgotten King", "The Dragon shapeshifter", "Prideful General", "The Mad King", "High Priests", "Ancient Pirate King" };
+			string[] enemyLeaderArray = new string[] {
+                "Council of Elves",
+                "Immortal Wizard",
+                "Tribal Cheiftan",
+                "The forgotten King",
+                "The Dragon shapeshifter",
+                "Prideful General",
+                "The Mad King",
+                "High Priests",
+                "Ancient Pirate King" };
             return enemyLeaderArray;
         }
 
         public string[] Elemental()
         {
-            string[] elementTypes = { "Fire", "Water", "Earth", "Air", "Lightning", "Ice", "Light", "Darkness", "Poison", "Acid", "Wind", "Metal", "Holy", "Shadow", "Nature", "Ghost", "Gravity", "Alien" };
+            string[] elementTypes = {
+                "Fire",
+                "Water",
+                "Earth",
+                "Air",
+                "Lightning",
+                "Ice",
+                "Light",
+                "Darkness",
+                "Poison",
+                "Acid",
+                "Wind",
+                "Metal",
+                "Holy",
+                "Shadow",
+                "Nature",
+                "Ghost",
+                "Gravity",
+                "Alien" };
             return elementTypes;
         }
 
         public string[] EnemyAdjective()
 
         {
-            string[] leaderAdjective = new string[] {
+            string[] enemyAdjective = new string[] {
                 "Bald",
                 "Skinny",
                 "Zelous",
+                "Cursed",
+                "Mad",
                 "Drunk",
                 "Silent",
                 "Deaf",
@@ -61,27 +90,50 @@ namespace simple_console_RPG
                 "Short",
                 "Tall",
                 "Feeble" };
-            return leaderAdjective;
+            return enemyAdjective;
         }
 
         public string[] Location()
 
         {
 
-            string[] locationArray = new string[] { "Castle", "Forest", "Desert", "Swamp", "Rainy Dungeon", "Grassy Village", "Mountain", "Volcano", "Ice Kingdom", "Jungle" };
+            string[] locationArray = new string[] {
+                "Castle",
+                "Forest",
+                "Desert",
+                "Swamp",
+                "Dungeon",
+                "Grassy Village",
+                "Mountain",
+                "Volcano",
+                "Ice Kingdom",
+                "Jungle" };
             return locationArray;
         }
 
         public string[] NPC()
         {
-            string[] npcArray = new string[] { "Wise old person", "young child", "lost banker" };
+            string[] npcArray = new string[] {
+                "Wise old person",
+                "young child", 
+                "lost banker" };
             return npcArray;
 
         }
 
         public string[] PlayerObjective()
         {
-            string[] objectiveArray = new string[] { "Save the princess", "Find the keys to the hidden kingdom", "Defeat the emperor", "find who killed your father", "solve the puzzle of the time treasure", "Heal the ancient tree", "uncover the corruption in the city", "help the rebels free their people", "Vanquish the wizard", "Destroy the magic orb" };
+            string[] objectiveArray = new string[] {
+                "Save the princess",
+                "Find the keys to the hidden kingdom",
+                "Defeat the emperor",
+                "find who killed your father",
+                "solve the puzzle of the time treasure",
+                "Heal the ancient tree",
+                "uncover the corruption in the city",
+                "help the rebels free their people",
+                "Vanquish the wizard",
+                "Destroy the magic orb" };
             return objectiveArray;
         }
 

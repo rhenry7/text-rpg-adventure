@@ -103,6 +103,10 @@ public class CharacterStats
                 Console.Write($"{stats[i]}: ");
                 statsValues[i] += int.Parse(Console.ReadLine());
                 pointsRemaining = pointsToSpend -= statsValues[i];
+                 if (pointsRemaining == 0 || pointsRemaining < 0)
+                    {
+                        break;
+                    }
                 Console.WriteLine($"Remaining points to spend: {pointsRemaining} \n");
 
                 } else
