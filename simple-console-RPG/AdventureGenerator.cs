@@ -4,37 +4,6 @@ using simple_console_RPG;
 
 public class AdventureGenerator
 {
-    // main story points
-    public string[] enemyArray = new string[] { "Goblin Army", "Evil Elves", "Savage Wizards", "Barbarians", "Undead Knights", "Ghost Mercenaries", "Lava Lizards with swords", "Fire Dragon", "Corrupt Politicians"};
-    public string[] enemyLeaderArray = new string[] { "Council of Elves", "Immortal Wizard", "Tribal Cheiftan", "The forgotten King", "The Dragon shapeshifter", "Prideful General", "The Mad King", "High Priests", "Ancient Pirate King" };
-    public string[] locationArray = new string[] { "Castle", "Forest", "Desert", "Swamp", "Rainy Dungeon", "Grassy Village", "Mountain", "Volcano", "Ice Kingdom", "Jungle" };
-    public string[] objectiveArray = new string[] { "Save the princess", "Find the keys to the hidden kingdom", "Defeat the emperor", "find who killed your father", "solve the puzzle of the time treasure", "Heal the ancient tree", "uncover the corruption in the city", "help the rebels free their people", "Vanquish the wizard", "Destroy the magic orb" };
-    // NPC's
-    public string[] npcArray = new string[] { "Wise old person", "young child", "lost banker" };
-    // specifics for enemy, locations or objective
-    public string[] enemyMotivationArray = new string[] {
-        "Environmentalism: The enemy is an environmental extremist who believes that humans are destroying the planet and seeks to stop them at any cost by destroying all of humanity",
-        "Religious fundamentalism: The enemy is Mysteriously motivated by religious fundamentalism and seeks to establish a theocratic state based on their particular belief system.",
-        "Greed: The enemy is a greedy villian who believes that wealth is the most important goal, even if it means exploiting others and destroying any thing in their path.",
-        "Pride: The enemy is a representative of a powerful foreign kindgom that seeks to exploit or dominate the world for their own benefit.",
-        "Madness: The enemy is driven insane by dark magic, a curse, or a traumatic event, causing them to lash out against others.",
-        "Redemption: The enemy seeks redemption for past misdeeds, but believes that the only way to achieve it is by committing a great act of evil.",
-        "Survival: The enemy believs they are justified and is simply trying to survive in a dangerous world and views the players as a threat to their own existence.",
-        "Honor: The enemy is Fiercely motivated by a sense of honor or duty, and believes that their actions are justified by a higher moral code.",
-        "Independence: The enemy is fighting for independence and autonomy from a larger, more powerful state or kingdom, motivated by a desire for self-determination and sovereignty... they will destroy everything to achieve this",
-        "Love: The enemy believs they are the hero is motivated by love for another person, whether it be a romantic partner, family member, or friend, and will do anything to protect them."
-    };
-    // verbs
-    string[] fightVerbs = new string[] { "Attack", "Strike", "Assault", "Charge", "Pummel", "Smash", "Thrash", "Beat", "Conquer", "Vanquish" };
-    string[] dodgeVerbs = new string[] { "Duck", "Dodge", "Evade", "Escape", "Flee", "Jump", "Roll", "Sprint", "Tumble", "Weave" };
-    // adverbs
-    string[] combatAdverbs = new string[] { "Ferociously", "Savagely", "Brutally", "Viciously", "Relentlessly", "Mercilessly", "Fiercely", "Wildly", "Intensely", "Violently" };
-    string[] dodgeAdverbs = new string[] { "Swiftly", "Gracefully", "Effortlessly", "Nimbly", "Quickly", "Evasively", "Skillfully", "Agilely", "Dexterously", "Acrobatically" };
-    // adjectives
-    string[] enemyAdjectives = new string[] { "Fierce", "Savage", "Mysterious", "Brutal", "Hateful", "Cruel", "Malignant", "Wicked", "Cunning", "Diabolical" };
-    string[] magicAdverbs = new string[] { "Mystically", "Enchantingly", "Eerily", "Magically", "Spellbindingly", "Charmingly", "Spiritedly", "Ethereally", "Supernaturally", "Enigmatically" };
-    // magic attacks
-    string[] magicSpells = new string[] { "Fireball", "Ice Lance", "Thunderbolt", "Frost Nova", "Arcane Missile", "Shadow Bolt", "Divine Light", "Nature's Wrath", "Gravity Well", "Time Warp" };
     private readonly int exitCode;
 
     enum Scenario
@@ -143,11 +112,32 @@ public class AdventureGenerator
     // dont need three dice rolls, one can do the job..
     public async Task<string> GenerateAdventure(int? DiceRollOne, int? DiceRollTwo, int? DiceRollThree, string? Choice, PlayerStats player) // int Location, int Enemy, int Objective
     {
+
+        // randomizer
+        int random = new Random().Next(0, 10);
+
+        // api junk
         string apikeyFilePath = "apikey.txt";
         string text = File.ReadAllText(apikeyFilePath);
         OpenAIAPI api = new OpenAIAPI(text);
         var chat = api.Chat.CreateConversation();
+
+        // story helper classes
         PlayerStats newPlayer = new PlayerStats();
+        Grammar grammar = new Grammar();
+        StorySetup story = new StorySetup();
+
+        // set up
+        string[] location = story.Location();
+        string[] enemy = story.EnemyType();
+        string[] playerObjective = story.PlayerObjective();
+        string[] enemyObjective = story.EnemyObjective();
+        // grammar / words
+        string[] fight = grammar.GetFightVerbs();
+        string[] magicSpell = grammar.MagicSpells();
+        string[] combatDescription = grammar.GetCombatAdverbs();
+        string[] dodge = grammar.GetDodgeVerbs();
+        // player stats
         newPlayer = player;
         Health = player.Health;
         Strength = player.Strength;
@@ -163,11 +153,11 @@ public class AdventureGenerator
 
         if (DiceRollOne.HasValue && DiceRollTwo.HasValue && DiceRollThree.HasValue)
         {
-            Setting = locationArray[(int)DiceRollOne];
-            EnemyAi = enemyArray[(int)DiceRollTwo];
-            Goal = objectiveArray[(int)DiceRollThree];
-            EnemyGoal = enemyMotivationArray[new Random().Next(0, 10)];
-            CombatDescription = combatAdverbs[new Random().Next(0, 10)];
+            Setting = location[(int)DiceRollOne];
+            EnemyAi = enemy[(int)DiceRollTwo];
+            Goal = playerObjective[(int)DiceRollThree];
+            EnemyGoal = enemyObjective[new Random().Next(enemyObjective.Length)];
+            CombatDescription = combatDescription[new Random().Next(combatDescription.Length)];
         }
 
         string GenerateChapterOutline()
@@ -236,7 +226,7 @@ public class AdventureGenerator
                         chat.AppendSystemMessage(res);
                         chat.AppendSystemMessage($"characters encounter and must fight the enemy,"
                             + $"they battle in the {Setting} but the battle is {CombatDescription}"
-                            + "player uses strength skil to fight"
+                            + $"player uses strength skil in the fight where the {EnemyAi} tried to {fight[random]} them"
                             + $"player has decided becuase of motive to fight typeof:  [single, singular] {EnemyAi} using their typeof: {Goal}"
                             + $"continue the story, player takes some damage in the {CombatDescription} battle, they navigate {Setting} to defeat {EnemyAi} ...four sentences"); ;
 
@@ -255,7 +245,7 @@ public class AdventureGenerator
                         chat.AppendSystemMessage($"continue the story.. characters struggle to fight {EnemyAi},"
                        + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
                        + "due to speed character takes minor damage, and deals with an injury"
-                       + $"luckily, they use their speed to {dodgeVerbs[new Random().Next(0, 10)]} the enemy.. they navigate the {Setting} and get away!"
+                       + $"luckily, they use their speed to {dodge[new Random().Next(0, 10)]} the enemy.. they navigate the {Setting} and get away!"
                        + $"speed has helped the character escape the evil {EnemyAi}.. the journey continues ..four sentences");
                         Health = Health - new Random().Next(0, 10);
                         var endSpeedScenario = await chat.GetResponseFromChatbotAsync();
@@ -271,8 +261,8 @@ public class AdventureGenerator
                         Console.WriteLine($"You have HP: {Health} remaining...");
                         chat.AppendSystemMessage($"continue the story.. characters encounter and must fight one of the {EnemyAi},"
                          + "the player take damage and is injured!.."
-                         + $"the battle is {CombatDescription} but the player use their {magicSpells[new Random().Next(0, 8)]}"
-                         + $"player is battling in this {Setting} now uses more magic abilities and {magicSpells[new Random().Next(0, 8)]}!.."
+                         + $"the battle is {CombatDescription} but the player use their {magicSpell[new Random().Next(0, 8)]}"
+                         + $"player is battling in this {Setting} now uses more magic abilities and {magicSpell[new Random().Next(0, 8)]}!.."
                          + $"the battle is magical,chaotic, they try relentlessly to defeat this individual {EnemyAi} they survive and continue their {Goal}.. four sentences");
                         var endMagicScenario = await chat.GetResponseFromChatbotAsync();
                         ChapterTwoComplete = true;
@@ -324,7 +314,7 @@ public class AdventureGenerator
                 {
                     Console.WriteLine("You were neither strong or lucky enough to survive this quest young warrior... you have fallen in battle.");
                     Console.WriteLine("You have lost! Game Over.");
-                    chat.AppendSystemMessage($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
+                    chat.AppendSystemMessage($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {EnemyGoal[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
                     chat.AppendUserInput("the character has died due to their injuries");
                     Console.ReadLine();
                     Environment.Exit(exitCode);
@@ -348,7 +338,7 @@ public class AdventureGenerator
                     Console.WriteLine("You were neither strong or lucky enough to survive this quest young warrior... you have fallen in battle.");
                     await Task.Delay(2000);
                     Console.WriteLine("You have lost! Game Over.");
-                    chat.AppendSystemMessage($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
+                    chat.AppendSystemMessage($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {EnemyGoal[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
                     Console.ReadLine();
                     Environment.Exit(exitCode);
                     return "";
@@ -385,7 +375,7 @@ public class AdventureGenerator
                     PlayerStats newPlayer = new PlayerStats();
 
                     chat.AppendSystemMessage($"the character has been rewarded for their kindness and bravery in helping a stranger in the {Setting}"
-                        + $"the stranger has rewarded the character with a special kind of magical berry to heal give renewed strength to defeat the {enemyGoal}"
+                        + $"the stranger has rewarded the character with a special kind of magical berry to heal give renewed strength to defeat the {EnemyGoal}"
                         + $"the stranger points the player to the direction of where to defeat the leader of the {EnemyAi} , continuing the story and for the final battle");
                     Console.WriteLine($"You have entered the encounter with {Health} HP.");
                     await Task.Delay(2000);
@@ -426,7 +416,7 @@ public class AdventureGenerator
                     Console.WriteLine($"You have 0 HP remaining...");
                     Console.WriteLine("You were neither strong or lucky enough to survive this quest young warrior... you have fallen in battle.");
                     Console.WriteLine("You have lost! Game Over.");
-                    chat.AppendUserInput($"Despite their best effort, the player has now died and failed their {Goal}, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {enemyMotivationArray[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
+                    chat.AppendUserInput($"Despite their best effort, the player has now died and failed their {Goal}, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {EnemyGoal} and achieves their goal!  .. one paragraph");
                     Console.ReadLine();
                     Environment.Exit(exitCode);
                     return " ";
