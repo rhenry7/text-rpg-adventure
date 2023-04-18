@@ -19,6 +19,13 @@ namespace simple_console_RPG
             return enemyLeaderArray;
         }
 
+        public string[] EnemyAdjective()
+
+        {
+            string[] leaderAdjective = new string[] { "Bald", "Skinny", "Drunk", "Silent", "Deaf", "Blind", "Short", "Tall", "Feeble" };
+            return leaderAdjective;
+        }
+
         public string[] Location()
 
         {
@@ -43,16 +50,16 @@ namespace simple_console_RPG
         public string[] EnemyObjective()
         {
             string[] enemyMotivationArray = new string[] {
-            "Environmentalism: The enemy is an environmental extremist who believes that humans are destroying the planet and seeks to stop them at any cost by destroying all of humanity",
-            "Religious fundamentalism: The enemy is Mysteriously motivated by religious fundamentalism and seeks to establish a theocratic state based on their particular belief system.",
-            "Greed: The enemy is a greedy villian who believes that wealth is the most important goal, even if it means exploiting others and destroying any thing in their path.",
-            "Pride: The enemy is a representative of a powerful foreign kindgom that seeks to exploit or dominate the world for their own benefit.",
-            "Madness: The enemy is driven insane by dark magic, a curse, or a traumatic event, causing them to lash out against others.",
-            "Redemption: The enemy seeks redemption for past misdeeds, but believes that the only way to achieve it is by committing a great act of evil.",
-            "Survival: The enemy believs they are justified and is simply trying to survive in a dangerous world and views the players as a threat to their own existence.",
-            "Honor: The enemy is Fiercely motivated by a sense of honor or duty, and believes that their actions are justified by a higher moral code.",
-            "Independence: The enemy is fighting for independence and autonomy from a larger, more powerful state or kingdom, motivated by a desire for self-determination and sovereignty... they will destroy everything to achieve this",
-            "Love: The enemy believs they are the hero is motivated by love for another person, whether it be a romantic partner, family member, or friend, and will do anything to protect them." };
+            "Ecco-terrism, The enemy is an environmental extremist who believes that humans are destroying the planet and seeks to stop them at any cost by destroying all of humanity",
+            "Cult fanaticism, The enemy is Mysteriously motivated by religious fundamentalism and seeks to establish a theocratic state based on their particular belief system.",
+            "Greed, The enemy is a greedy villian who believes that wealth is the most important goal, even if it means exploiting others and destroying any thing in their path.",
+            "Pride, The enemy is a representative of a powerful foreign kindgom that seeks to exploit or dominate the world for their own benefit.",
+            "Madness, The enemy is driven insane by dark magic, a curse, or a traumatic event, causing them to lash out against others.",
+            "Redemption, The enemy seeks redemption for past misdeeds, but believes that the only way to achieve it is by committing a great act of evil.",
+            "Survival, The enemy believs they are justified and is simply trying to survive in a dangerous world and views the players as a threat to their own existence.",
+            "Honor, The enemy is Fiercely motivated by a sense of honor or duty, and believes that their actions are justified by a higher moral code.",
+            "Independence, The enemy is fighting for independence and autonomy from a larger, more powerful state or kingdom, motivated by a desire for self-determination and sovereignty... they will destroy everything to achieve this",
+            "Love, The enemy believs they are the hero is motivated by love for another person, whether it be a romantic partner, family member, or friend, and will do anything to protect them." };
             return enemyMotivationArray;
         }
         

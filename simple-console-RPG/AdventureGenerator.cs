@@ -126,10 +126,12 @@ public class AdventureGenerator
         PlayerStats newPlayer = new PlayerStats();
         Grammar grammar = new Grammar();
         StorySetup story = new StorySetup();
+        StoryParameters storyparams = new StoryParameters();
 
         // set up
         string[] location = story.Location();
         string[] enemy = story.EnemyType();
+        string[] enemyAdjective = story.EnemyAdjective();
         string[] playerObjective = story.PlayerObjective();
         string[] enemyObjective = story.EnemyObjective();
         // grammar / words
@@ -145,27 +147,22 @@ public class AdventureGenerator
         Magic = player.Magic;
         Luck = player.Luck;
 
-
-        chat.AppendSystemMessage("add to a dungeons and dragons storyline, adventure game, based on [AppendUserInput]"
-            + "write in the style of [George RR Martin, The Bible, Tolkein, C.S. Lewis, ]"
-            + "use stats of character to update the story.");
-
-
         if (DiceRollOne.HasValue && DiceRollTwo.HasValue && DiceRollThree.HasValue)
         {
             Setting = location[(int)DiceRollOne];
-            EnemyAi = enemy[(int)DiceRollTwo];
+            EnemyAi = enemy[new Random().Next(enemy.Length)];
             Goal = playerObjective[(int)DiceRollThree];
             EnemyGoal = enemyObjective[new Random().Next(enemyObjective.Length)];
             CombatDescription = combatDescription[new Random().Next(combatDescription.Length)];
         }
 
-        string GenerateChapterOutline()
-        {
-            string chapterOneOutLine = $"in this phase of the story takes place in {Setting} and the player has just encountered and survived a battle with an {EnemyAi}"
-                + $"the battle was {CombatDescription} the player has strong feelings about stopping {EnemyGoal}";
-            return chapterOneOutLine;
-        }
+        string storyparam = storyparams.TemplateForStory(Setting, EnemyAi, enemyAdjective[random], EnemyGoal, Goal);
+        //Console.WriteLine("write the params");
+        //return storyparam;
+
+        chat.AppendSystemMessage("roleplay as a dungeon master, story teller to a dungeons and dragons storyline, adventure game"
+            + "tell a dramatic and poetic heartful adventure"
+            + $"I would like you to use the  {storyparam} as an outline for the story ...one paragraph");
 
         switch (Choice)
         {
@@ -230,7 +227,7 @@ public class AdventureGenerator
                             + $"player has decided becuase of motive to fight typeof:  [single, singular] {EnemyAi} using their typeof: {Goal}"
                             + $"continue the story, player takes some damage in the {CombatDescription} battle, they navigate {Setting} to defeat {EnemyAi} ...four sentences"); ;
 
-                        Health = Health - new Random().Next(0, 10); ;
+                        Health = Health - new Random().Next(3, 10); ;
                         await Task.Delay(1000);
                         Console.WriteLine($"You have HP: {Health} remaining");
                         await Task.Delay(2000);
@@ -241,7 +238,7 @@ public class AdventureGenerator
 
                     case Scenario.SpeedBased:
                         await Task.Delay(1000);
-                        Console.WriteLine("Speed based character...");
+                        Console.WriteLine(EnemyAi);
                         chat.AppendSystemMessage($"continue the story.. characters struggle to fight {EnemyAi},"
                        + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
                        + "due to speed character takes minor damage, and deals with an injury"
@@ -256,7 +253,7 @@ public class AdventureGenerator
                     case Scenario.MagicBased:
                         await Task.Delay(1000);
                         Console.WriteLine("You prepare your magic to defeat the upcoming enemy...");
-                        Health = Health - new Random().Next(0, 10);
+                        Health = Health - new Random().Next(3, 10);
                         await Task.Delay(2000);
                         Console.WriteLine($"You have HP: {Health} remaining...");
                         chat.AppendSystemMessage($"continue the story.. characters encounter and must fight one of the {EnemyAi},"
@@ -365,7 +362,7 @@ public class AdventureGenerator
                 Console.ReadLine();
                 chat.AppendSystemMessage("the player has chosen to accept a side quest to help an npc, using skill to solve a mystery .. four sentences");
                 Console.WriteLine($"Speed: {player.Speed}, Magic: {player.Magic}, Strength: {player.Strength}");
-                if (player.Speed + player.Strength + player.Magic > new Random().Next(0, 6))
+                if (player.Speed + player.Strength + player.Magic > new Random().Next(3, 6))
                 {
                     // decide on how much to heal player
                     string apikeyFilePath = "apikey.txt";

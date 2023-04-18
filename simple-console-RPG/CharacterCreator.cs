@@ -40,13 +40,21 @@ public class CharacterStats
     public void PrintOptions()
     {
         Console.WriteLine("Choose your starting class...");
+        Task.Delay(1000);
         Console.WriteLine("1. Elf - +4 speed, +2 strength,"); // range; speed;
+        Task.Delay(1000);
         Console.WriteLine("2. Mage - +6 magic"); // magic;
+        Task.Delay(1000);
         Console.WriteLine("3. Hero - +5 strength, +2 speed"); // strength; speed;
+        Task.Delay(1000);
         Console.WriteLine("4. Hobbit - +6 luck"); // luck;
+        Task.Delay(1000);
         Console.WriteLine("5. Dwarf - +8 strength;"); // strengh;
+        Task.Delay(1000);
         Console.WriteLine("6. Barbarian - +1 HP, +5 strength"); // hp; strength;
+        Task.Delay(1000);
         Console.WriteLine("7. Theif - +5 speed, +1 luck"); // speed; luck;        StartingClass = int.Parse(Console.ReadLine());
+        Task.Delay(1000);
         StartingClass = int.Parse(Console.ReadLine());
         Console.WriteLine("\n");
     }
@@ -55,6 +63,7 @@ public class CharacterStats
     {
         Console.WriteLine("Enter your character name ");
         Name = Console.ReadLine();
+        Task.Delay(1000);
         Console.WriteLine($"Welcome {Name}!");
         PrintOptions();
         //Console.ReadLine();
@@ -71,8 +80,10 @@ public class CharacterStats
             var stats = new[] { "Health", "Speed", "Strength", "Magic", "Luck" };
             var statsValues = new int[stats.Length];
 
+            Task.Delay(1000);
             Console.WriteLine($"You have {pointsToSpend} points to spend.");
             Console.WriteLine("These are your stats!");
+            Task.Delay(1000);
             Console.WriteLine($"Health: {playerStats.Health}");
             Console.WriteLine($"Speed: {playerStats.Speed}");
             Console.WriteLine($"Strength: {playerStats.Strength}");
@@ -102,11 +113,17 @@ public class CharacterStats
 
             playerStats.UpdateStats(statsValues, Name, CharacterClass);
 
+            Task.Delay(1000);
             Console.WriteLine("These are your stats!");
+            Task.Delay(1000);
             Console.WriteLine($"Health: {playerStats.Health}");
+            Task.Delay(1000);
             Console.WriteLine($"Speed: {playerStats.Speed}");
+            Task.Delay(1000);
             Console.WriteLine($"Strength: {playerStats.Strength}");
+            Task.Delay(1000);
             Console.WriteLine($"Magic: {playerStats.Magic}");
+            Task.Delay(1000);
             Console.WriteLine($"Luck: {playerStats.Luck}");
 
             RollDiceOptions();
