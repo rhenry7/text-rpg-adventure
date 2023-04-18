@@ -106,7 +106,7 @@ public class AdventureGenerator
 
 
     // dont need three dice rolls, one can do the job..
-    public async Task<string> GenerateAdventure(int? DiceRollOne, int? DiceRollTwo, int? DiceRollThree, string? Choice, PlayerStats player) // int Location, int Enemy, int Objective
+    public async  Task <string> GenerateAdventure(int? DiceRollOne, int? DiceRollTwo, int? DiceRollThree, string? Choice, PlayerStats? playerStats) // int Location, int Enemy, int Objective
     {
 
         // randomizer
@@ -120,7 +120,6 @@ public class AdventureGenerator
         var chat = api.Chat.CreateConversation();
 
         // story helper classes
-        PlayerStats newPlayer = new PlayerStats();
         Grammar grammar = new Grammar();
         StorySetup story = new StorySetup();
         StoryParameters storyparams = new StoryParameters();
@@ -139,8 +138,9 @@ public class AdventureGenerator
         string[] combatDescription = grammar.GetCombatAdverbs();
         string[] dodge = grammar.GetDodgeVerbs();
 
+        PlayerStats player = new PlayerStats();
+
         // player stats
-        newPlayer = player;
         Health = player.Health;
         Strength = player.Strength;
         Speed = player.Speed;
@@ -162,39 +162,63 @@ public class AdventureGenerator
         var storyparam = storyparams.TemplateForStory(Setting, EnemyAi, enemyElemental[random],  EnemyGoal, Goal);
         string secondPhase = storyparams.SecondPhase(Setting, EnemyAi, CombatDescription, random);
 
-
-        chat.AppendSystemMessage("roleplay as a dungeon master, story teller to a dungeons and dragons storyline, adventure game"
+        Console.WriteLine("are you ready? (chapter one)");
+        string chapterOneStart = Console.ReadLine();
+        if(chapterOneStart == "chapter one")
+        {
+            chat.AppendSystemMessage("roleplay as a dungeon master, story teller to a dungeons and dragons storyline, adventure game"
             + "tell a dramatic and poetic heartful adventure"
             + $"I would like you to use the  {storyparam} as an outline for the story ...one paragraph");
+            chat.AppendUserInput(" generate adventure storyline for an RPG game! "
+              + " Create a story based on user input such as location, enemy, and objective."
+              + $" If the user tells you a location, enemy and {EnemyGoal}, you create the setting for the story based on input. limit 1 paragraph");
+            chat.AppendUserInput($"location: {Setting}");
+            chat.AppendUserInput($"Enemy: {EnemyAi}");
+            chat.AppendUserInput($"Objective: {Goal}");
 
-        switch (Choice)
-        {
-            case "chapter two":
-                Console.WriteLine("Chapter One complete...");
-                string chapterTwo = await ChapterTwoAsync();
-                Console.WriteLine(chapterTwo);
-                return "";
-            case "chapter three":
-                Console.WriteLine("Chapter Two complete...");
-                //chat.AppendExampleChatbotOutput("the first two chapters of the adventure are complete");
-                string chapterThree = await ChapterThreeAsync();
-                Console.WriteLine(chapterThree);
-                return ""; // create a chapter four
-            case "chapter four":
-                Console.WriteLine("Chapter Three complete...");
-                string chapterFour = await ChapterFourAsync();
-                Console.WriteLine(chapterFour);
-                break;
-            default:
-                chat.AppendSystemMessage(" generate adventure storyline for an RPG game! "
-                + " Create a story based on user input such as location, enemy, and objective."
-                + $" If the user tells you a location, enemy and {EnemyGoal}, you create the setting for the story based on input. limit 1 paragraph");
-                chat.AppendUserInput($"location: {Setting}");
-                chat.AppendUserInput($"Enemy: {EnemyAi}");
-                chat.AppendUserInput($"Objective: {Goal}");
-                ChapterOneComplete = true;
-                break;
+            string response = await chat.GetResponseFromChatbotAsync();
+            Console.WriteLine(response);
+
+            Console.WriteLine("are you ready? (chapter two)");
+            string chapterTwoRes = Console.ReadLine();
+            if (chapterTwoRes == "chapter two")
+            {
+            string chapterTwo = await ChapterTwoAsync();
+            return chapterTwo;
+            }
         }
+
+       
+
+
+        //switch (Choice)
+        //{
+        //    case "chapter two":
+        //        Console.WriteLine("Chapter One complete...");
+        //        string chapterTwo = await ChapterTwoAsync();
+        //        Console.WriteLine(chapterTwo);
+        //        return "";
+        //    case "chapter three":
+        //        Console.WriteLine("Chapter Two complete...");
+        //        //chat.AppendExampleChatbotOutput("the first two chapters of the adventure are complete");
+        //        string chapterThree = await ChapterThreeAsync();
+        //        Console.WriteLine(chapterThree);
+        //        return ""; // create a chapter four
+        //    case "chapter four":
+        //        Console.WriteLine("Chapter Three complete...");
+        //        string chapterFour = await ChapterFourAsync();
+        //        Console.WriteLine(chapterFour);
+        //        break;
+        //    default:
+        //        chat.AppendSystemMessage(" generate adventure storyline for an RPG game! "
+        //        + " Create a story based on user input such as location, enemy, and objective."
+        //        + $" If the user tells you a location, enemy and {EnemyGoal}, you create the setting for the story based on input. limit 1 paragraph");
+        //        chat.AppendUserInput($"location: {Setting}");
+        //        chat.AppendUserInput($"Enemy: {EnemyAi}");
+        //        chat.AppendUserInput($"Objective: {Goal}");
+        //        ChapterOneComplete = true;
+        //        break;
+        //}
 
 
         async Task<string> ChapterTwoAsync() // handles combat 
@@ -221,6 +245,7 @@ public class AdventureGenerator
                              player.Luck > 4 ? Scenario.LuckBased :
                              player.Health > 5 ? Scenario.HealthBased :
                              Scenario.Default;
+
                 switch (scenario)
                 {
                     case Scenario.StrengthBased:
@@ -236,8 +261,11 @@ public class AdventureGenerator
                         await Task.Delay(2000);
                         Console.WriteLine($"You must use your strength to fight... \n");
                         var endStrengthScenario = await chat.GetResponseFromChatbotAsync();
+                        Console.WriteLine(endStrengthScenario);
                         ChapterTwoComplete = true;
                         return endStrengthScenario;
+                        ChapterThreeAsync();
+
 
                     case Scenario.SpeedBased:
                         await Task.Delay(1000);
@@ -253,8 +281,10 @@ public class AdventureGenerator
                        + $"speed has helped the character escape the evil {EnemyAi}.. the journey continues ..four sentences");
                         Health = Health - new Random().Next(0, 10);
                         var endSpeedScenario = await chat.GetResponseFromChatbotAsync();
+                        Console.WriteLine(endSpeedScenario);
                         ChapterTwoComplete = true;
                         return endSpeedScenario;
+                        ChapterThreeAsync();
 
 
                     case Scenario.MagicBased:
@@ -271,6 +301,7 @@ public class AdventureGenerator
                         var endMagicScenario = await chat.GetResponseFromChatbotAsync();
                         ChapterTwoComplete = true;
                         return endMagicScenario;
+                        ChapterThreeAsync();
 
                     case Scenario.Default:
                         await Task.Delay(1000);
@@ -310,6 +341,7 @@ public class AdventureGenerator
                     chat.AppendUserInput("the character has died due to their injuries");
                     Console.ReadLine();
                     Environment.Exit(exitCode);
+
                     return "You have died! Game Over.";
                 }
 
@@ -320,6 +352,9 @@ public class AdventureGenerator
                 + $" the player now only has {Health} health points remaining!"
                 + $" player has strong emotional reaction to the {EnemyGoal}"
                 + $" player encounters the leader {EnemyAi} motivated by deep  {EnemyGoal} who wants to use the {Setting} for their goal.. two sentences");
+                return "the adventure continues...";
+
+                ChapterFourAsync();
 
                 // TODO: check if this is where the problem is?
                 //string chapterThreeConclusion = await chat.GetResponseFromChatbotAsync();
@@ -337,14 +372,9 @@ public class AdventureGenerator
                     chat.AppendSystemMessage($"Despite their best effort, the player has now died, they have 0 health... their strength, speed, magic was not enough and {EnemyAi} has tapes into their motivation: {EnemyGoal[new Random().Next(0, 10)]} and achieves their goal {enemyGoal[new Random().Next(0, 10)]}!  .. one paragraph");
                     Console.ReadLine();
                     Environment.Exit(exitCode);
-                    return "";
-                } else
-                {
-                    return "you died";
-                }
-           
-            
 
+                    return "";
+                } 
         }
 
         async Task<string> ChapterFourAsync() // side quest
@@ -395,8 +425,6 @@ public class AdventureGenerator
                     chat.AppendSystemMessage($"the characters journey in this {Setting} to defeat the {EnemyAi}!... four sentences");
 
                     string response = await chat.GetResponseFromChatbotAsync();
-                    Console.WriteLine(response);
-
                     return response;
                 }
               
@@ -420,9 +448,6 @@ public class AdventureGenerator
             return "im not sure...";
         }
 
-      
-
-        string response = await chat.GetResponseFromChatbotAsync();
-        return response;
+        return null; 
     }
 }

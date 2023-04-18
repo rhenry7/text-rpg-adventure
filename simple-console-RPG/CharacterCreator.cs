@@ -63,57 +63,57 @@ public class CharacterStats
     {
         Console.WriteLine("Enter your character name ");
         Name = Console.ReadLine();
+        Console.WriteLine("\n");
+
         Task.Delay(1000);
-        Console.WriteLine($"Welcome {Name}!");
+        Console.WriteLine($"Welcome {Name}! \n");
         PrintOptions();
-        //Console.ReadLine();
+
         if (StartingClass == 1)
         {
             CharacterClass = "Elf";
-            //var elf = new CharacterStats();
             PlayerStats playerStats = new PlayerStats();
             playerStats.Speed = 4;
             playerStats.Strength = 2;
+
             Console.WriteLine("You have chosen Elf! \n");
+
             var pointsToSpend = 10;
             int pointsRemaining = 10;
             var stats = new[] { "Health", "Speed", "Strength", "Magic", "Luck" };
             var statsValues = new int[stats.Length];
 
             Task.Delay(1000);
-            Console.WriteLine($"You have {pointsToSpend} points to spend.");
+            Console.WriteLine($"You have {pointsToSpend} points to spend. \n");
+            Task.Delay(2000);
             Console.WriteLine("These are your stats!");
-            Task.Delay(1000);
+            Task.Delay(3000);
             Console.WriteLine($"Health: {playerStats.Health}");
             Console.WriteLine($"Speed: {playerStats.Speed}");
             Console.WriteLine($"Strength: {playerStats.Strength}");
             Console.WriteLine($"Magic: {playerStats.Magic}");
             Console.WriteLine($"Luck: {playerStats.Luck}");
-   
-
        
             AdventureGenerator story = new AdventureGenerator();
 
-
-
             for (int i = 0; i < stats.Length; i++)
+
             {
-                if(pointsToSpend >= pointsRemaining)
-                {
+                
                 Console.Write($"{stats[i]}: ");
                 statsValues[i] += int.Parse(Console.ReadLine());
                 pointsRemaining = pointsToSpend -= statsValues[i];
-                 if (pointsRemaining == 0 || pointsRemaining < 0)
-                    {
-                        Console.WriteLine($"You have ran out of points \n");
-                        break;
-                    }
+
+                if (pointsRemaining == 0 || pointsRemaining < 0)
+
+                        {
+                            Console.WriteLine($"You have ran out of points \n");
+                            break;
+                        }
+
                 Console.WriteLine($"Remaining points to spend: {pointsRemaining} \n");
 
-                } else
-                {
-                    Console.WriteLine($"You fool! you have no more points!");
-                }
+                
             }
 
             playerStats.UpdateStats(statsValues, Name, CharacterClass);
@@ -134,7 +134,7 @@ public class CharacterStats
             Console.WriteLine($"Magic: {playerStats.Magic}");
 
             Task.Delay(1000);
-            Console.WriteLine($"Luck: {playerStats.Luck}");
+            Console.WriteLine($"Luck: {playerStats.Luck} \n");
 
             RollDiceOptions();
             int diceRollOne = RollDice();
@@ -143,26 +143,26 @@ public class CharacterStats
 
             Console.WriteLine("one moment while we create your story... \n");
 
-            string chapterOne = story.GenerateAdventure(diceRollOne, diceRolltwo, diceRollthree, null, playerStats).Result;
-            Console.WriteLine(chapterOne);
+            story.GenerateAdventure(diceRollOne, diceRolltwo, diceRollthree, null, playerStats);
+         
 
-            Console.WriteLine("What will you do now?... (chapter two) \n");
-            string firstChoice = Console.ReadLine(); // enter 3
+            //Console.WriteLine("What will you do now?... (chapter two) \n");
+            //string firstChoice = Console.ReadLine(); // enter 3
+   
+            //string chapterThree = story.GenerateAdventure(null, null, null, firstChoice, playerStats).Result;
+            //Console.WriteLine(chapterThree);
+            //Console.WriteLine("What will you do now?... (chapter three) \n");
 
-            string chapterThree = story.GenerateAdventure(null, null, null, firstChoice, playerStats).Result;
-            Console.WriteLine(chapterThree);
-            Console.WriteLine("What will you do now?... (chapter three) \n");
+            //string secondChoice = Console.ReadLine(); // enter 4
+            //string chapterFour = story.GenerateAdventure(null, null, null, secondChoice, null).Result;
+            //Console.WriteLine("What will you do now?... (chapter four) \n");
 
-            string secondChoice = Console.ReadLine(); // enter 4
-            string chapterFour = story.GenerateAdventure(null, null, null, secondChoice, playerStats).Result;
-            Console.WriteLine("What will you do now?... (chapter four) \n");
-
-            string thirdChoice = Console.ReadLine(); // chapter four
-            string chapterFive = story.GenerateAdventure(null, null, null, thirdChoice, playerStats).Result;
-            Console.WriteLine(chapterFive);
+            //string thirdChoice = Console.ReadLine(); // chapter four
+            //string chapterFive = story.GenerateAdventure(null, null, null, thirdChoice, null).Result;
+            //Console.WriteLine(chapterFive);
 
 
-            Console.WriteLine(chapterFour);
+            //Console.WriteLine(chapterFour);
 
             return playerStats;
         }
