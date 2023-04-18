@@ -7,7 +7,29 @@ namespace simple_console_RPG
 
 		{
 
-			string[] enemyArray = { "Goblin Army", "Evil Elves", "Savage Wizards", "Barbarians", "Undead Knights", "Ghost Mercenaries", "Lava Lizards with swords", "Fire Dragon", "Corrupt Politicians" };
+			string[] enemyArray = {
+                "Goblin Army",
+                "Evil Elves",
+                "Savage Wizards",
+                "religous orcs",
+                "zealous goblins",
+                "Bandits",
+                "Vampires",
+                "Golemns",
+                "Ghost pirates",
+                "Mad Alchemists",
+                "Sand Lizard",
+                "Giant Spiders",
+                "Mutant Spiders",
+                "Mountain Barbarians",
+                "Undead Knights",
+                "Ghost Mercenaries",
+                "Lava Lizards with swords",
+                "Fire Dragon",
+                "Poison Spiders",
+                "Orcs",
+                "Giants",
+                "Ice Dragon"};
 			return enemyArray;
 		}
 
@@ -19,10 +41,26 @@ namespace simple_console_RPG
             return enemyLeaderArray;
         }
 
+        public string[] Elemental()
+        {
+            string[] elementTypes = { "Fire", "Water", "Earth", "Air", "Lightning", "Ice", "Light", "Darkness", "Poison", "Acid", "Wind", "Metal", "Holy", "Shadow", "Nature", "Ghost", "Gravity", "Alien" };
+            return elementTypes;
+        }
+
         public string[] EnemyAdjective()
 
         {
-            string[] leaderAdjective = new string[] { "Bald", "Skinny", "Drunk", "Silent", "Deaf", "Blind", "Short", "Tall", "Feeble" };
+            string[] leaderAdjective = new string[] {
+                "Bald",
+                "Skinny",
+                "Zelous",
+                "Drunk",
+                "Silent",
+                "Deaf",
+                "Blind",
+                "Short",
+                "Tall",
+                "Feeble" };
             return leaderAdjective;
         }
 

@@ -103,10 +103,6 @@ public class AdventureGenerator
     }
 
 
-    public string GenerateChapterOutline()
-    {
-        return "";
-    }
 
 
     // dont need three dice rolls, one can do the job..
@@ -132,6 +128,7 @@ public class AdventureGenerator
         string[] location = story.Location();
         string[] enemy = story.EnemyType();
         string[] enemyAdjective = story.EnemyAdjective();
+        string[] enemyElemental = story.Elemental();
         string[] playerObjective = story.PlayerObjective();
         string[] enemyObjective = story.EnemyObjective();
         // grammar / words
@@ -156,7 +153,8 @@ public class AdventureGenerator
             CombatDescription = combatDescription[new Random().Next(combatDescription.Length)];
         }
 
-        string storyparam = storyparams.TemplateForStory(Setting, EnemyAi, enemyAdjective[random], EnemyGoal, Goal);
+        string storyparam = storyparams.TemplateForStory(Setting, EnemyAi, enemyElemental[random],  EnemyGoal, Goal);
+        string secondPhase = storyparams.SecondPhase(Setting, EnemyAi, CombatDescription, random);
         //Console.WriteLine("write the params");
         //return storyparam;
 
@@ -219,9 +217,8 @@ public class AdventureGenerator
                 switch (scenario)
                 {
                     case Scenario.StrengthBased:
-                        string res = GenerateChapterOutline();
-                        chat.AppendSystemMessage(res);
-                        chat.AppendSystemMessage($"characters encounter and must fight the enemy,"
+                        chat.AppendSystemMessage(secondPhase);
+                        chat.AppendUserInput($"characters encounter and must fight the enemy,"
                             + $"they battle in the {Setting} but the battle is {CombatDescription}"
                             + $"player uses strength skil in the fight where the {EnemyAi} tried to {fight[random]} them"
                             + $"player has decided becuase of motive to fight typeof:  [single, singular] {EnemyAi} using their typeof: {Goal}"
