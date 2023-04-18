@@ -105,6 +105,7 @@ public class CharacterStats
                 pointsRemaining = pointsToSpend -= statsValues[i];
                  if (pointsRemaining == 0 || pointsRemaining < 0)
                     {
+                        Console.WriteLine($"You have ran out of points \n");
                         break;
                     }
                 Console.WriteLine($"Remaining points to spend: {pointsRemaining} \n");
@@ -118,15 +119,20 @@ public class CharacterStats
             playerStats.UpdateStats(statsValues, Name, CharacterClass);
 
             Task.Delay(1000);
-            Console.WriteLine("These are your stats!");
+            Console.WriteLine("These are your stats! \n");
+
             Task.Delay(1000);
             Console.WriteLine($"Health: {playerStats.Health}");
+
             Task.Delay(1000);
             Console.WriteLine($"Speed: {playerStats.Speed}");
+
             Task.Delay(1000);
             Console.WriteLine($"Strength: {playerStats.Strength}");
+
             Task.Delay(1000);
             Console.WriteLine($"Magic: {playerStats.Magic}");
+
             Task.Delay(1000);
             Console.WriteLine($"Luck: {playerStats.Luck}");
 
@@ -142,13 +148,16 @@ public class CharacterStats
 
             Console.WriteLine("What will you do now?... (chapter two) \n");
             string firstChoice = Console.ReadLine(); // enter 3
+
             string chapterThree = story.GenerateAdventure(null, null, null, firstChoice, playerStats).Result;
             Console.WriteLine(chapterThree);
             Console.WriteLine("What will you do now?... (chapter three) \n");
+
             string secondChoice = Console.ReadLine(); // enter 4
             string chapterFour = story.GenerateAdventure(null, null, null, secondChoice, playerStats).Result;
             Console.WriteLine("What will you do now?... (chapter four) \n");
-            string thirdChoice = Console.ReadLine();
+
+            string thirdChoice = Console.ReadLine(); // chapter four
             string chapterFive = story.GenerateAdventure(null, null, null, thirdChoice, playerStats).Result;
             Console.WriteLine(chapterFive);
 
