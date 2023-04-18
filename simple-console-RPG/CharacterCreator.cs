@@ -40,18 +40,18 @@ public class CharacterStats
     public void PrintOptions()
     {
         Console.WriteLine("Choose your starting class...");
-        Console.WriteLine("1. Elf - range, speed;"); // range; speed;
-        Console.WriteLine("2. Mage - magic"); // magic;
-        Console.WriteLine("3. Hero - strength, speed"); // strength; speed;
-        Console.WriteLine("4. Hobbit - luck"); // luck;
-        Console.WriteLine("5. Dwarf - strengt;"); // strengh;
-        Console.WriteLine("6. Barbarian - hp, strength"); // hp; strength;
-        Console.WriteLine("7. Theif - speed, luck"); // speed; luck;        StartingClass = int.Parse(Console.ReadLine());
+        Console.WriteLine("1. Elf - +4 speed, +2 strength,"); // range; speed;
+        Console.WriteLine("2. Mage - +6 magic"); // magic;
+        Console.WriteLine("3. Hero - +5 strength, +2 speed"); // strength; speed;
+        Console.WriteLine("4. Hobbit - +6 luck"); // luck;
+        Console.WriteLine("5. Dwarf - +8 strength;"); // strengh;
+        Console.WriteLine("6. Barbarian - +1 HP, +5 strength"); // hp; strength;
+        Console.WriteLine("7. Theif - +5 speed, +1 luck"); // speed; luck;        StartingClass = int.Parse(Console.ReadLine());
         StartingClass = int.Parse(Console.ReadLine());
         Console.WriteLine("\n");
     }
 
-    public CharacterStats? CreateCharacter()
+    public PlayerStats? CreateCharacter()
     {
         Console.WriteLine("Enter your character name ");
         Name = Console.ReadLine();
@@ -61,25 +61,26 @@ public class CharacterStats
         if (StartingClass == 1)
         {
             CharacterClass = "Elf";
-            var elf = new CharacterStats();
+            //var elf = new CharacterStats();
+            PlayerStats playerStats = new PlayerStats();
+            playerStats.Speed = 4;
+            playerStats.Strength = 2;
             Console.WriteLine("You have chosen Elf! \n");
             var pointsToSpend = 10;
             int pointsRemaining = 10;
             var stats = new[] { "Health", "Speed", "Strength", "Magic", "Luck" };
             var statsValues = new int[stats.Length];
 
-            Console.WriteLine($"Your starting level is {elf.Level}! \n");
             Console.WriteLine($"You have {pointsToSpend} points to spend.");
             Console.WriteLine("These are your stats!");
-            Console.WriteLine($"Health: {elf.Health}");
-            Console.WriteLine($"Speed: {elf.Speed}");
-            Console.WriteLine($"Strength: {elf.Strength}");
-            Console.WriteLine($"Magic: {elf.Magic}");
-            Console.WriteLine($"Luck: {elf.Luck}");
-            Console.WriteLine($"Level: {elf.Level}");
-            Console.WriteLine($"Exp: {elf.EXP}");
+            Console.WriteLine($"Health: {playerStats.Health}");
+            Console.WriteLine($"Speed: {playerStats.Speed}");
+            Console.WriteLine($"Strength: {playerStats.Strength}");
+            Console.WriteLine($"Magic: {playerStats.Magic}");
+            Console.WriteLine($"Luck: {playerStats.Luck}");
+   
 
-            PlayerStats playerStats = new PlayerStats();
+       
             AdventureGenerator story = new AdventureGenerator();
 
 
@@ -89,7 +90,7 @@ public class CharacterStats
                 if(pointsToSpend >= pointsRemaining)
                 {
                 Console.Write($"{stats[i]}: ");
-                statsValues[i] = int.Parse(Console.ReadLine());
+                statsValues[i] += int.Parse(Console.ReadLine());
                 pointsRemaining = pointsToSpend -= statsValues[i];
                 Console.WriteLine($"Remaining points to spend: {pointsRemaining} \n");
 
@@ -133,7 +134,7 @@ public class CharacterStats
 
             Console.WriteLine(chapterFour);
 
-            return elf;
+            return playerStats;
         }
 
         return null;
