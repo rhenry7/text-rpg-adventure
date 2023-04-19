@@ -59,7 +59,7 @@ public class CharacterStats
         Console.WriteLine("\n");
     }
 
-    public PlayerStats? CreateCharacter()
+    public async Task<PlayerStats> CreateCharacter()
     {
         Console.WriteLine("Enter your character name ");
         Name = Console.ReadLine();
@@ -94,7 +94,7 @@ public class CharacterStats
             Console.WriteLine($"Magic: {playerStats.Magic}");
             Console.WriteLine($"Luck: {playerStats.Luck}");
        
-            AdventureGenerator story = new AdventureGenerator();
+            //AdventureGenerator story = new AdventureGenerator();
 
             for (int i = 0; i < stats.Length; i++)
 
@@ -143,12 +143,13 @@ public class CharacterStats
 
             Console.WriteLine("one moment while we create your story... \n");
 
-            story.GenerateAdventure(diceRollOne, diceRolltwo, diceRollthree, null, playerStats);
-         
+            StoryObjects story = new StoryObjects();
+            await story.ChainMethodsAsync(playerStats);
+
 
             //Console.WriteLine("What will you do now?... (chapter two) \n");
             //string firstChoice = Console.ReadLine(); // enter 3
-   
+
             //string chapterThree = story.GenerateAdventure(null, null, null, firstChoice, playerStats).Result;
             //Console.WriteLine(chapterThree);
             //Console.WriteLine("What will you do now?... (chapter three) \n");
