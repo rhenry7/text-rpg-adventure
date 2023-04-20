@@ -143,10 +143,7 @@ public class CharacterStats
 
             Console.WriteLine("one moment while we create your story... \n");
 
-            StoryObjects story = new StoryObjects();
-            await story.ChainMethodsAsync(playerStats);
-
-
+       
             //Console.WriteLine("What will you do now?... (chapter two) \n");
             //string firstChoice = Console.ReadLine(); // enter 3
 
