@@ -214,7 +214,6 @@ namespace simple_console_RPG
             chat.AppendUserInput($"location: {Setting}");
             chat.AppendUserInput($"Enemy: {EnemyAi}");
             chat.AppendUserInput($"Objective: {Goal}");
-            chat.AppendUserInput($"Objective: {Goal}");
             chat.AppendUserInput($"this is just the beginning... the journey continues");
 
 
@@ -326,8 +325,8 @@ namespace simple_console_RPG
                             Task.Delay(2000).Wait();
                             Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
                             ChapterTwoComplete = true;
-                        await Chapter2();
-                        return this;
+                            await Chapter2();
+                            return this;
 
                         case Scenario.SpeedBased:
                             Console.WriteLine("Speed based character...");
@@ -404,6 +403,7 @@ namespace simple_console_RPG
             // set up
             string[] location = story.Location();
             string[] enemy = story.EnemyType();
+            string[] enemyLeader = story.EnemyLeader();
             string[] enemyAdjective = story.EnemyAdjective();
             string[] enemyElemental = story.Elemental();
             string[] playerObjective = story.PlayerObjective();
@@ -417,28 +417,48 @@ namespace simple_console_RPG
 
             StoryParameters nextPhase = new StoryParameters();
 
-            Console.WriteLine("Speed based character...");
+            Task.Delay(1000).Wait();
+            Console.WriteLine("a new phase begins... \n");
+
+            Task.Delay(2000).Wait();
+            Console.WriteLine("a new enemy approaches!... \n");
+
+            Task.Delay(2500).Wait();
+            Console.WriteLine("prepare for an enemy encounter!... \n");
+
+            string Leader = enemyLeader[new Random().Next(3, 8)];
             chat.AppendSystemMessage(StoryInfo + BattleDetail);
+
             // use a pre made template function for the append input of this section
             chat.AppendUserInput(nextPhase.ThirdPhase(Setting, EnemyAi, combatDescription[new Random().Next(2, 8)], new Random().Next(1,4)));
             chat.AppendUserInput($"the adventure continues and the player has killed a great of the {EnemyAi} and approach the enemy leader,"
-            + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
-            + "due to speed character takes minor damage, and deals with an injury"
+            + $"This is where the conflict and tension of the story begin to build. The player now faces obstacles and challenges that make it increasingly difficult to achieve their {Goal}"
+            + $"they use their skills but the {EnemyAi} and their leader {Leader} proves to be a real challenge.. "
             + $"luckily, they use their speed to {dodge[new Random().Next(0, 10)]} the enemy.. they navigate the {Setting} and get away!"
-            + $"the evil {EnemyAi} leader.. the journey continues ..four sentences");
-            var endSpeedScenario = await chat.GetResponseFromChatbotAsync();
-            Console.WriteLine(endSpeedScenario);
-            BattleDetail = endSpeedScenario;
+            + $"the evil {Leader} leader.. the journey continues ..one paragraph \n");
+            var Chapter2Conclusion = await chat.GetResponseFromChatbotAsync();
+
+            Console.WriteLine(Chapter2Conclusion);
+            //BattleDetail = Chapter2Conclusion;
             newPlayer.Health -= new Random().Next(3, 10);
-            Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
+            Task.Delay(2000).Wait();
+            Console.WriteLine("you are wounded!... \n");
+
+            Task.Delay(2000).Wait();
+            Console.WriteLine($"You have HP: {newPlayer.Health} remaining \n");
+
+
+            Task.Delay(1000).Wait();
+            Console.WriteLine("somehow have survived, your journey continues... \n");
 
             ChapterTwoComplete = true;
-            return this;
             return this;
         }
 
         public StoryObjects Chapter3()
         {
+
+
             Console.WriteLine("Method3");
             return this;
         }
