@@ -56,14 +56,22 @@ namespace simple_console_RPG
 
         public int Dice { get; set; }
 
-        public string _storyInto { get; set; }
-
         public int _fightChoice { get; set; }
+
+        public string _storyInto { get; set; }
+        public string _battleDetail { get; set; }
+
 
         public string StoryInfo
         {
             get => _storyInto;
             set => _storyInto = value;
+        }
+
+        public string BattleDetail
+        {
+            get => _battleDetail;
+            set => _battleDetail = value;
         }
 
         private string ChapterOneComplete
@@ -278,9 +286,9 @@ namespace simple_console_RPG
             //int promptResponse = Prompt("would you like to fight? enter fight to continue", "fight", "run");
             string[] options = new string[] { "fight", "run" };
 
-            Task.Delay(2000).Wait();
+            Task.Delay(1000).Wait();
             Console.WriteLine("would you like to fight? enter fight to continue", "fight", "run");
-
+            Task.Delay(2000).Wait();
             Console.WriteLine("Enter `run` to run, or `fight` to fignt");
             UseFightOptions();
 
@@ -295,10 +303,11 @@ namespace simple_console_RPG
                                  newPlayer.Luck > 4 ? Scenario.LuckBased :
                                  newPlayer.Health > 5 ? Scenario.HealthBased :
                                  Scenario.Default;
+
                     switch (scenario)
                     {
                         case Scenario.StrengthBased:
-                            chat.AppendSystemMessage(StoryInfo);
+                        chat.AppendSystemMessage(StoryInfo);
                         chat.AppendUserInput($"this is just half way into the adventure... the journey continues");
                         chat.AppendUserInput($"at this point in the story, characters encounter and must fight the enemy,"
                                 + $"they battle in the {Setting} but the battle is {CombatDescription}"
@@ -311,12 +320,14 @@ namespace simple_console_RPG
                             Task.Delay(2000).Wait();
                             Console.WriteLine($"Prepare your strength to fight... \n");
                             var endStrengthScenario = await chat.GetResponseFromChatbotAsync();
-                            Task.Delay(2000).Wait();
-                            newPlayer.Health -= new Random().Next(3, 10); ;
-                            Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
                             Console.WriteLine(endStrengthScenario);
+                             BattleDetail = endStrengthScenario;
+                            newPlayer.Health -= new Random().Next(3, 10); ;
+                            Task.Delay(2000).Wait();
+                            Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
                             ChapterTwoComplete = true;
-                            return this;
+                        await Chapter2();
+                        return this;
 
                         case Scenario.SpeedBased:
                             Console.WriteLine("Speed based character...");
@@ -326,18 +337,20 @@ namespace simple_console_RPG
                            + "due to speed character takes minor damage, and deals with an injury"
                            + $"luckily, they use their speed to {dodge[new Random().Next(0, 10)]} the enemy.. they navigate the {Setting} and get away!"
                            + $"speed has helped the character escape the evil {EnemyAi}.. the journey continues ..four sentences");
-                            Health = Health - new Random().Next(0, 10);
-                            var endSpeedScenario = await chat.GetResponseFromChatbotAsync();
+                             var endSpeedScenario = await chat.GetResponseFromChatbotAsync();
                             Console.WriteLine(endSpeedScenario);
+                            BattleDetail = endSpeedScenario;
+                               newPlayer.Health -= new Random().Next(3, 10);
+                                Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
 
                             ChapterTwoComplete = true;
-                            return this;
+                        await Chapter2();
+                        return this;
 
 
                         case Scenario.MagicBased:
                             chat.AppendSystemMessage(StoryInfo);
                             Console.WriteLine("You prepare your magic to defeat the upcoming enemy.");
-                            Health = Health - new Random().Next(0, 10);
                             Task.Delay(2000).Wait();
                             Console.WriteLine($"You have HP: {Health} remaining..");
 
@@ -348,29 +361,79 @@ namespace simple_console_RPG
                              + $"the battle is magical,chaotic, they try relentlessly to defeat this individual {EnemyAi} they survive and continue their {Goal}.. four sentences");
                             var endMagicScenario = await chat.GetResponseFromChatbotAsync();
                             Console.WriteLine(endMagicScenario);
+                            BattleDetail = endMagicScenario;
+                            newPlayer.Health -= new Random().Next(3, 10);
+                            Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
                             ChapterTwoComplete = true;
-                            return this;
+                        await Chapter2();
+                        return this;
 
                         case Scenario.Default:
                             Console.WriteLine("you were quite unexceptional and have died. Game Over.");
                             Console.ReadLine();
                             Environment.Exit(exitCode);
-                            return this; ;
+                        await Chapter2();
+                        return this; ;
                     }
                     Console.WriteLine("Invalid choice. Please try again.");
 
 
                 }
 
-            
-          
-            
+
+
+   
             return this;
         }   
 
-        public StoryObjects Chapter2()
+        public async Task<StoryObjects> Chapter2()
         {
-            Console.WriteLine("Method2");
+
+            // api junk
+            string apikeyFilePath = "apikey.txt";
+            string text = File.ReadAllText(apikeyFilePath);
+
+            OpenAIAPI api = new OpenAIAPI(text);
+            var chat = api.Chat.CreateConversation();
+
+            // story helper classes
+            Grammar grammar = new Grammar();
+            StorySetup story = new StorySetup();
+            StoryParameters storyparams = new StoryParameters();
+
+            // set up
+            string[] location = story.Location();
+            string[] enemy = story.EnemyType();
+            string[] enemyAdjective = story.EnemyAdjective();
+            string[] enemyElemental = story.Elemental();
+            string[] playerObjective = story.PlayerObjective();
+            string[] enemyObjective = story.EnemyObjective();
+
+            // grammar / words
+            string[] fight = grammar.GetFightVerbs();
+            string[] magicSpell = grammar.MagicSpells();
+            string[] combatDescription = grammar.GetCombatAdverbs();
+            string[] dodge = grammar.GetDodgeVerbs();
+
+            StoryParameters nextPhase = new StoryParameters();
+
+            Console.WriteLine("Speed based character...");
+            chat.AppendSystemMessage(StoryInfo + BattleDetail);
+            // use a pre made template function for the append input of this section
+            chat.AppendUserInput(nextPhase.ThirdPhase(Setting, EnemyAi, combatDescription[new Random().Next(2, 8)], new Random().Next(1,4)));
+            chat.AppendUserInput($"the adventure continues and the player has killed a great of the {EnemyAi} and approach the enemy leader,"
+            + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
+            + "due to speed character takes minor damage, and deals with an injury"
+            + $"luckily, they use their speed to {dodge[new Random().Next(0, 10)]} the enemy.. they navigate the {Setting} and get away!"
+            + $"the evil {EnemyAi} leader.. the journey continues ..four sentences");
+            var endSpeedScenario = await chat.GetResponseFromChatbotAsync();
+            Console.WriteLine(endSpeedScenario);
+            BattleDetail = endSpeedScenario;
+            newPlayer.Health -= new Random().Next(3, 10);
+            Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
+
+            ChapterTwoComplete = true;
+            return this;
             return this;
         }
 

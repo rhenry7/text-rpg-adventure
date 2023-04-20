@@ -47,7 +47,7 @@ namespace simple_console_RPG
             string combatPhase = $"at this stage of the quest, approaching the end, and after defeating legions of {enemy}" 
                 + "the player has completed a positive meeting with a helpful stranger, the march into the enemy"
                 + $"a {combatDescription} encounter with the enemy leader, the player has over come an {enemyAttack[new Random().Next(enemyDescription.Length)]} attack"
-                + $"the player now continues the journey, after having made more progress in the {location}, mildly injured... one paragraph";
+                + $"the player now continues the journey, after having made more progress in the {location}, mildly injured...";
 
             return combatPhase;
         }
