@@ -149,6 +149,13 @@ namespace simple_console_RPG
             {
                 Console.WriteLine("\n");
             }
+            else if (FightChoice == 4)
+            {
+                Console.WriteLine("you suck");
+                Console.ReadLine();
+                Environment.Exit(exitCode);
+                Console.WriteLine("\n");
+            }
             else
             {
                 Console.WriteLine("you suck");
@@ -388,6 +395,10 @@ namespace simple_console_RPG
         public async Task<StoryObjects> Chapter2()
         {
 
+            // TODO: add some interacting aspect to this section
+            // add one or two if checks
+            // find inventory armor that adds to health
+
             // api junk
             string apikeyFilePath = "apikey.txt";
             string text = File.ReadAllText(apikeyFilePath);
@@ -441,7 +452,7 @@ namespace simple_console_RPG
             Console.WriteLine(Chapter2Conclusion);
             //BattleDetail = Chapter2Conclusion;
             newPlayer.Health -= new Random().Next(3, 10);
-            Task.Delay(2000).Wait();
+            Task.Delay(1000).Wait();
             Console.WriteLine("you are wounded!... \n");
 
             Task.Delay(2000).Wait();
@@ -457,14 +468,22 @@ namespace simple_console_RPG
 
         public StoryObjects Chapter3()
         {
-
+            // NPC encounter
+            // receive berry for health and speed or inv item to increase defense 
+            // if luck is high, receive both 
 
             Console.WriteLine("Method3");
             return this;
         }
 
+        // add a shop function? use coins to buy an item,
+        // choose from list, list item increase player stat 
+
         public StoryObjects Chapter4()
         {
+            // story conclusion
+            // player achieves goal
+            // the end
             Console.WriteLine("Method4");
             return this;
         }
