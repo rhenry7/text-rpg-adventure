@@ -115,8 +115,25 @@ namespace simple_console_RPG
         {
             string[] npcArray = new string[] {
                 "Wise old person",
+                "Farmer",
+                "Merchant",
+                "Elf",
+                "Peaceful Shppkeeper",
+                "Blind blacksmith",
+                "Nobleman",
+                "Archer",
+                "Ranger",
+                "Lost rogue",
+                "Peaceful Tribe",
+                "Peaceful Dwarf ",
+                "Soldier Dwarf",
+                "Farmer Dwarf",
+                "Tree Spirit",
+                "Princess",
+                "Prince",
+                "Chef",
                 "young child", 
-                "lost banker" };
+                 };
             return npcArray;
 
         }
