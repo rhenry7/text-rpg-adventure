@@ -195,11 +195,36 @@ namespace simple_console_RPG
 
         }
 
+
+
+public async Task<ChatResult> CreateChatCompletionAsync(params ChatMessage[] messages) 
+{
+var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
+{
+    Model = Model.ChatGPTTurbo,
+    Temperature = 0.1,
+    MaxTokens = 50,
+    Messages = new ChatMessage[] {
+            new ChatMessage(ChatMessageRole.User, "Hello!")
+        }
+});
+			return CreateChatCompletionAsync(request);       
+             }
+
+// for example
+
+
+
+
+
+
+        // for example
+
         public async Task<StoryObjects> Intro(Task<PlayerStats> player)
         {
 
-
             this.newPlayer = await player;
+   
 
             Console.WriteLine($"stats ->  strength: {newPlayer.Strength}, speed: {newPlayer.Speed}, health: {newPlayer.Health} ");
 
@@ -211,7 +236,9 @@ namespace simple_console_RPG
             string text = File.ReadAllText(apikeyFilePath);
 
             OpenAIAPI api = new OpenAIAPI(text);
-            var chat = api.Chat.CreateConversation();
+            //var chat = api.Chat.CreateConversation();
+            var res = await _endpoint.CreateChatCompletionAsync(req);
+            
 
             // story helper classes
             Grammar grammar = new Grammar();
@@ -234,67 +261,76 @@ namespace simple_console_RPG
             string[] dodge = grammar.GetDodgeVerbs();
 
 
-          
 
             Setting = location[new Random().Next(location.Length)];
+
+            Console.WriteLine($"For your roll.., your story location is: {Setting} \n");
+
             EnemyAi = enemy[new Random().Next(enemy.Length)];
+
+            Console.WriteLine($"For your roll.., your story enemy is: {EnemyAi} \n");
+
             EnemyLeader = enemyLeader[new Random().Next(enemyLeader.Length)];
+
+            Console.WriteLine($"For your roll.., the enemy leader is: {EnemyLeader}  \n");
+
             Goal = playerObjective[new Random().Next(playerObjective.Length)];
             EnemyGoal = enemyObjective[new Random().Next(enemyObjective.Length)];
             CombatDescription = combatDescription[new Random().Next(combatDescription.Length)];
 
             var storyparam = storyparams.TemplateForStory(Setting, EnemyAi, enemyElemental[random], EnemyGoal, Goal);
 
+
+            // USE AS "GROUNDING" FOR SETTING THE STAGE
             chat.AppendSystemMessage("roleplay as a dungeon master, story teller to a dungeons and dragons storyline, adventure game"
+            + $"use {newPlayer.Name} as the name of the main character"
             + "tell a dramatic and poetic heartful adventure"
             + "write the beginning, epic intro of an adventure story"
+              + "use character development in the style of George RR Martin"
+            + "use action description in the style of Hemingway"
+            + "use as chapter 1 of 3 part story"
+            + "Write 5 sentences with up to 15 words each"
+            + $"use this {storyparam}  + {EnemyAi}  + {Goal}  + {Setting} as an first act outline for the story"
             + $"use this {storyparam} as an outline for the story");
-            chat.AppendUserInput( " Create a story based on user input such as location, enemy, and objective."
-              + $" create the setting for the story based on input and player must stop {EnemyGoal}, by defeating {EnemyLeader}. ..one paragraph");
-            chat.AppendUserInput($"location: {Setting}");
-            chat.AppendUserInput($"Enemy: {EnemyAi}");
-            chat.AppendUserInput($"Objective: {Goal}");
-            chat.AppendUserInput($"this is just the beginning... the journey continues");
 
+await foreach (var res in chat.StreamResponseEnumerableFromChatbotAsync())
+{
+	Console.WriteLine(res);
+}
 
-            string response = await chat.GetResponseFromChatbotAsync();
-            StoryInfo = response;
-            ChapterOneComplete = response;
-            Console.WriteLine(response);
+            // string response = await chat.GetResponseFromChatbotAsync();
+            // StoryInfo = response;
+            // ChapterOneComplete = response;
+            // Console.WriteLine(response);
+
+        //     var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
+        //     {
+        //         Model = Model.ChatGPTTurbo,
+        //         Temperature = 0.1,
+        //         MaxTokens = 50,
+        //         Messages = new ChatMessage[] {
+        //     new ChatMessage(ChatMessageRole.User, storyparam)
+        // }
+        //     });
+
+            // Console.WriteLine(storyparam);
+
+            Console.WriteLine("chapter 1 end");
+
             await Chapter1(newPlayer);
             return this;
 
         }
 
 
-        //public async Task<StoryObjects> Chapter1(PlayerStats playerstats)
-        //{
-        //    Console.WriteLine("Would you like to fight...");
-        //    Console.WriteLine("3 - for yes");
-        //    Console.WriteLine("4 - for no");
-        //    FightChoice = int.Parse(Console.ReadLine());
-        //    if (FightChoice == 3)
-        //    {
-        //        Console.WriteLine("\n");
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("you suck");
-
-        //    }
-        //}
-
-
-
-
         public async Task<StoryObjects> Chapter1(PlayerStats playerstats)
         {
 
             Console.WriteLine("\n");
-            Task.Delay(2000).Wait();
-            Console.WriteLine("in chapter one \n");
-            Task.Delay(2000).Wait();
-            Console.WriteLine($"stats ->  strength: {newPlayer.Strength}, speed: {newPlayer.Speed}, health: {newPlayer.Health} ");
+            Task.Delay(1000).Wait();
+            Console.WriteLine("chapter one begins... \n");
+            Task.Delay(3000).Wait();
+            Console.WriteLine($"Battle stats: strength: {newPlayer.Strength}, speed: {newPlayer.Speed}, health: {newPlayer.Health} ");
 
             // api junk
             string apikeyFilePath = "apikey.txt";
@@ -326,6 +362,8 @@ namespace simple_console_RPG
 
             string Leader = enemyLeader[new Random().Next(3, 8)];
 
+            Task.Delay(2000).Wait();
+            Console.WriteLine("An enemy approaches! \n");
 
             //int promptResponse = Prompt("would you like to fight? enter fight to continue", "fight", "run");
             string[] options = new string[] { "fight", "run" };
@@ -335,10 +373,16 @@ namespace simple_console_RPG
             Task.Delay(2000).Wait();
             PlayerChoice();
 
-                while (true)
+
+            Task.Delay(3000).Wait();
+            Console.WriteLine("You have chosen bravely... prepare yourself for battle...");
+
+            while (true)
                 {
 
-                    Task.Delay(1000).Wait();
+                    Task.Delay(2000).Wait();
+                    Console.WriteLine("The battle begins! ");
+
                     Task.Delay(2000).Wait();
                     Scenario scenario = newPlayer.Strength > 3 ? Scenario.StrengthBased :
                                  newPlayer.Speed > 3 ? Scenario.SpeedBased :
@@ -362,9 +406,12 @@ namespace simple_console_RPG
 
                             Task.Delay(2000).Wait();
                             Console.WriteLine($"Prepare your strength to fight... \n");
-                            var endStrengthScenario = await chat.GetResponseFromChatbotAsync();
-                            Console.WriteLine(endStrengthScenario);
-                             BattleDetail = endStrengthScenario;
+
+                        //var endStrengthScenario = await chat.GetResponseFromChatbotAsync();
+                        //Console.WriteLine(endStrengthScenario);
+                        //BattleDetail = endStrengthScenario;
+
+                        Console.WriteLine("battle scenario");
                             newPlayer.Health -= new Random().Next(3, 10); ;
                             Task.Delay(2000).Wait();
                             Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
@@ -488,12 +535,16 @@ namespace simple_console_RPG
             + $"they use their skills but the {EnemyAi} and their leader {EnemyLeader} proves to be a real challenge.. "
             + $"luckily, they use their speed to {dodge[new Random().Next(0, 10)]} the enemy.. they navigate the {Setting} and get away!"
             + $"the evil {EnemyLeader} leader.. the journey continues ..one paragraph \n");
-            var Chapter2Conclusion = await chat.GetResponseFromChatbotAsync();
+            //var Chapter2Conclusion = await chat.GetResponseFromChatbotAsync();
 
-            BossEncounter1 = Chapter2Conclusion;
+            //BossEncounter1 = Chapter2Conclusion;
 
-            Console.WriteLine(Chapter2Conclusion);
+            //Console.WriteLine(Chapter2Conclusion);
             //BattleDetail = Chapter2Conclusion;
+
+
+            Console.WriteLine("chapter 2 end");
+
             newPlayer.Health -= new Random().Next(3, 10);
             Task.Delay(1000).Wait();
             Console.WriteLine("you are wounded!... \n");
@@ -564,9 +615,11 @@ namespace simple_console_RPG
             + $"in the side quest the player must help a {npcEncounter[new Random().Next(npcEncounter.Length)]}"
             + $"write an outcome where the player is rewarded with a magic berry that heals them"
             + $"after helping the player continues the journey to achieve {Goal} and {EnemyGoal} and save the {Setting}.. player prepares for final upcoming battle..one paragraph \n");
-            var chapter3end = await chat.GetResponseFromChatbotAsync();
 
-            Console.WriteLine(chapter3end);
+            //var chapter3end = await chat.GetResponseFromChatbotAsync();
+            //Console.WriteLine(chapter3end);
+
+            Console.WriteLine("chapter 3 end");
 
             Task.Delay(2000).Wait();
             Console.WriteLine("You have found a magic berry that heals your health! + 5 health \n");

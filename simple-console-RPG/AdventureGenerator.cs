@@ -109,6 +109,8 @@ public class AdventureGenerator
     public async  Task GenerateAdventure(int? DiceRollOne, int? DiceRollTwo, int? DiceRollThree, string? Choice, PlayerStats? playerStats) // int Location, int Enemy, int Objective
     {
 
+        Console.WriteLine("generate adventure: start part one");
+
         // randomizer
         int random = new Random().Next(0, 10);
 
@@ -164,15 +166,15 @@ public class AdventureGenerator
 
         async Task ChapterOneAsync()
         {
-            chat.AppendSystemMessage("roleplay as a dungeon master, story teller to a dungeons and dragons storyline, adventure game"
-     + "tell a dramatic and poetic heartful adventure"
-     + $"I would like you to use the  {storyparam} as an outline for the story ...one paragraph");
-            chat.AppendUserInput(" generate adventure storyline for an RPG game! "
+            chat.AppendUserInput("generate adventure storyline for an RPG game! "
               + " Create a story based on user input such as location, enemy, and objective."
               + $" If the user tells you a location, enemy and {EnemyGoal}, you create the setting for the story based on input. limit 1 paragraph");
             chat.AppendUserInput($"location: {Setting}");
             chat.AppendUserInput($"Enemy: {EnemyAi}");
             chat.AppendUserInput($"Objective: {Goal}");
+                        chat.AppendSystemMessage("roleplay as a dungeon master, story teller to a dungeons and dragons storyline, adventure game"
+     + "tell a dramatic and poetic heartfelt adventure"
+     + $"I would like you to use the  {storyparam} as an outline for the story ...one paragraph");
 
             string response = await chat.GetResponseFromChatbotAsync();
             Console.WriteLine(response);
