@@ -197,7 +197,7 @@ namespace simple_console_RPG
 
 
 
-public async Task<ChatResult> CreateChatCompletionAsync(params ChatMessage[] messages) 
+public async Task<ChatResult> CreateChatCompletionAsync(params ChatRequest[] messages) 
 {
 var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
 {
@@ -210,15 +210,6 @@ var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
 });
 			return CreateChatCompletionAsync(request);       
              }
-
-// for example
-
-
-
-
-
-
-        // for example
 
         public async Task<StoryObjects> Intro(Task<PlayerStats> player)
         {
@@ -237,7 +228,7 @@ var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
 
             OpenAIAPI api = new OpenAIAPI(text);
             //var chat = api.Chat.CreateConversation();
-            var res = await _endpoint.CreateChatCompletionAsync(req);
+            
             
 
             // story helper classes
@@ -280,38 +271,41 @@ var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
 
             var storyparam = storyparams.TemplateForStory(Setting, EnemyAi, enemyElemental[random], EnemyGoal, Goal);
 
+            var res = CreateChatCompletionAsync(storyparam);
+            Console.WriteLine(res);
+
 
             // USE AS "GROUNDING" FOR SETTING THE STAGE
-            chat.AppendSystemMessage("roleplay as a dungeon master, story teller to a dungeons and dragons storyline, adventure game"
-            + $"use {newPlayer.Name} as the name of the main character"
-            + "tell a dramatic and poetic heartful adventure"
-            + "write the beginning, epic intro of an adventure story"
-              + "use character development in the style of George RR Martin"
-            + "use action description in the style of Hemingway"
-            + "use as chapter 1 of 3 part story"
-            + "Write 5 sentences with up to 15 words each"
-            + $"use this {storyparam}  + {EnemyAi}  + {Goal}  + {Setting} as an first act outline for the story"
-            + $"use this {storyparam} as an outline for the story");
+            //             chat.AppendSystemMessage("roleplay as a dungeon master, story teller to a dungeons and dragons storyline, adventure game"
+            //             + $"use {newPlayer.Name} as the name of the main character"
+            //             + "tell a dramatic and poetic heartful adventure"
+            //             + "write the beginning, epic intro of an adventure story"
+            //               + "use character development in the style of George RR Martin"
+            //             + "use action description in the style of Hemingway"
+            //             + "use as chapter 1 of 3 part story"
+            //             + "Write 5 sentences with up to 15 words each"
+            //             + $"use this {storyparam}  + {EnemyAi}  + {Goal}  + {Setting} as an first act outline for the story"
+            //             + $"use this {storyparam} as an outline for the story");
 
-await foreach (var res in chat.StreamResponseEnumerableFromChatbotAsync())
-{
-	Console.WriteLine(res);
-}
+            // await foreach (var res in chat.StreamResponseEnumerableFromChatbotAsync())
+            // {
+            // 	Console.WriteLine(res);
+            // }
 
             // string response = await chat.GetResponseFromChatbotAsync();
             // StoryInfo = response;
             // ChapterOneComplete = response;
             // Console.WriteLine(response);
 
-        //     var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
-        //     {
-        //         Model = Model.ChatGPTTurbo,
-        //         Temperature = 0.1,
-        //         MaxTokens = 50,
-        //         Messages = new ChatMessage[] {
-        //     new ChatMessage(ChatMessageRole.User, storyparam)
-        // }
-        //     });
+            //     var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
+            //     {
+            //         Model = Model.ChatGPTTurbo,
+            //         Temperature = 0.1,
+            //         MaxTokens = 50,
+            //         Messages = new ChatMessage[] {
+            //     new ChatMessage(ChatMessageRole.User, storyparam)
+            // }
+            //     });
 
             // Console.WriteLine(storyparam);
 
