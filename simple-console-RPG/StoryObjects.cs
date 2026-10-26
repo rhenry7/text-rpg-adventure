@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Numerics;
-using Microsoft.Extensions.Options;
-using OpenAI_API;
 using simple_console_RPG;
 
 namespace simple_console_RPG
@@ -170,12 +167,31 @@ namespace simple_console_RPG
 
         private PlayerStats newPlayer;
 
+        // one narrator for the whole adventure so the story keeps its memory between chapters
+        private readonly Narrator narrator = new Narrator();
+
         public void PlayerChoice()
         {
 
             Console.WriteLine("3 - for yes");
             Console.WriteLine("4 - for no");
-            FightChoice = int.Parse(Console.ReadLine());
+            // accept the number or a word, and ask again on anything else
+            while (true)
+            {
+                string input = GameInput.ReadLineOrQuit().ToLowerInvariant();
+                if (input is "3" or "yes" or "y" or "fight" or "accept")
+                {
+                    FightChoice = 3;
+                    break;
+                }
+                if (input is "4" or "no" or "n" or "run" or "deny")
+                {
+                    FightChoice = 4;
+                    break;
+                }
+                Console.WriteLine("Please enter 3 for yes or 4 for no.");
+            }
+
             if (FightChoice == 3)
             {
                 Console.WriteLine("\n");
@@ -197,20 +213,6 @@ namespace simple_console_RPG
 
 
 
-public async Task<ChatResult> CreateChatCompletionAsync(params ChatRequest[] messages) 
-{
-var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
-{
-    Model = Model.ChatGPTTurbo,
-    Temperature = 0.1,
-    MaxTokens = 50,
-    Messages = new ChatMessage[] {
-            new ChatMessage(ChatMessageRole.User, "Hello!")
-        }
-});
-			return CreateChatCompletionAsync(request);       
-             }
-
         public async Task<StoryObjects> Intro(Task<PlayerStats> player)
         {
 
@@ -221,15 +223,6 @@ var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
 
             // randomizer
             int random = new Random().Next(0, 10);
-
-            // api junk
-            string apikeyFilePath = "apikey.txt";
-            string text = File.ReadAllText(apikeyFilePath);
-
-            OpenAIAPI api = new OpenAIAPI(text);
-            //var chat = api.Chat.CreateConversation();
-            
-            
 
             // story helper classes
             Grammar grammar = new Grammar();
@@ -271,43 +264,15 @@ var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
 
             var storyparam = storyparams.TemplateForStory(Setting, EnemyAi, enemyElemental[random], EnemyGoal, Goal);
 
-            var res = CreateChatCompletionAsync(storyparam);
-            Console.WriteLine(res);
+            // grounding: the rolled world facts become the narrator's system prompt
+            narrator.StartAdventure(newPlayer, Setting, EnemyAi, EnemyLeader, Goal, EnemyGoal, storyparam);
 
-
-            // USE AS "GROUNDING" FOR SETTING THE STAGE
-            //             chat.AppendSystemMessage("roleplay as a dungeon master, story teller to a dungeons and dragons storyline, adventure game"
-            //             + $"use {newPlayer.Name} as the name of the main character"
-            //             + "tell a dramatic and poetic heartful adventure"
-            //             + "write the beginning, epic intro of an adventure story"
-            //               + "use character development in the style of George RR Martin"
-            //             + "use action description in the style of Hemingway"
-            //             + "use as chapter 1 of 3 part story"
-            //             + "Write 5 sentences with up to 15 words each"
-            //             + $"use this {storyparam}  + {EnemyAi}  + {Goal}  + {Setting} as an first act outline for the story"
-            //             + $"use this {storyparam} as an outline for the story");
-
-            // await foreach (var res in chat.StreamResponseEnumerableFromChatbotAsync())
-            // {
-            // 	Console.WriteLine(res);
-            // }
-
-            // string response = await chat.GetResponseFromChatbotAsync();
-            // StoryInfo = response;
-            // ChapterOneComplete = response;
-            // Console.WriteLine(response);
-
-            //     var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
-            //     {
-            //         Model = Model.ChatGPTTurbo,
-            //         Temperature = 0.1,
-            //         MaxTokens = 50,
-            //         Messages = new ChatMessage[] {
-            //     new ChatMessage(ChatMessageRole.User, storyparam)
-            // }
-            //     });
-
-            // Console.WriteLine(storyparam);
+            string response = await narrator.NarrateAsync(
+                "Write the epic opening of the adventure, chapter 1 of a 3 part story. "
+                + "Use character development in the style of George RR Martin and action description in the style of Hemingway. "
+                + "Write 5 sentences with up to 15 words each.");
+            StoryInfo = response;
+            ChapterOneComplete = response;
 
             Console.WriteLine("chapter 1 end");
 
@@ -325,13 +290,6 @@ var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
             Console.WriteLine("chapter one begins... \n");
             Task.Delay(3000).Wait();
             Console.WriteLine($"Battle stats: strength: {newPlayer.Strength}, speed: {newPlayer.Speed}, health: {newPlayer.Health} ");
-
-            // api junk
-            string apikeyFilePath = "apikey.txt";
-            string text = File.ReadAllText(apikeyFilePath);
-
-            OpenAIAPI api = new OpenAIAPI(text);
-            var chat = api.Chat.CreateConversation();
 
             // story helper classes
             Grammar grammar = new Grammar();
@@ -388,24 +346,18 @@ var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
                     switch (scenario)
                     {
                         case Scenario.StrengthBased:
-                        chat.AppendSystemMessage(StoryInfo);
-                        chat.AppendUserInput($"this is just half way into the adventure... the journey continues");
-                        chat.AppendUserInput($"at this point in the story, characters encounter and must fight the enemy,"
+                            Task.Delay(2000).Wait();
+                            Console.WriteLine($"Prepare your strength to fight... \n");
+
+                        var endStrengthScenario = await narrator.NarrateAsync("this is just half way into the adventure... the journey continues. "
+                                + $"at this point in the story, characters encounter and must fight the enemy,"
                                 + $"they battle in the {Setting} but the battle is {CombatDescription}"
                                 + "player uses strength skil to fight"
                                 + $"player has decided becuase of motive to fight typeof:  [single, singular] {EnemyAi} using their typeof: {Goal}"
                                 + $"continue the story, player takes some damage in the {CombatDescription} battle, they navigate {Setting} to defeat one of the {EnemyAi}, the leader is still out there  ...one paragraph sentences"
                                 + "the journey continues... the fight goes on..");
+                        BattleDetail = endStrengthScenario;
 
-
-                            Task.Delay(2000).Wait();
-                            Console.WriteLine($"Prepare your strength to fight... \n");
-
-                        //var endStrengthScenario = await chat.GetResponseFromChatbotAsync();
-                        //Console.WriteLine(endStrengthScenario);
-                        //BattleDetail = endStrengthScenario;
-
-                        Console.WriteLine("battle scenario");
                             newPlayer.Health -= new Random().Next(3, 10); ;
                             Task.Delay(2000).Wait();
                             Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
@@ -415,14 +367,11 @@ var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
 
                         case Scenario.SpeedBased:
                             Console.WriteLine("Speed based character...");
-                            chat.AppendSystemMessage(StoryInfo);
-                            chat.AppendUserInput($"continue the story.. characters struggle to fight {EnemyAi},"
+                             var endSpeedScenario = await narrator.NarrateAsync($"continue the story.. characters struggle to fight {EnemyAi},"
                            + $"they use their skills but the {EnemyAi} proves to be a real challenge.. but wait!"
                            + "due to speed character takes minor damage, and deals with an injury"
                            + $"luckily, they use their speed to {dodge[new Random().Next(0, 10)]} the enemy.. they navigate the {Setting} and get away!"
                            + $"speed has helped the character escape the evil {EnemyAi}.. the journey continues ..four sentences");
-                             var endSpeedScenario = await chat.GetResponseFromChatbotAsync();
-                            Console.WriteLine(endSpeedScenario);
                             BattleDetail = endSpeedScenario;
                                newPlayer.Health -= new Random().Next(3, 10);
                                 Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
@@ -433,20 +382,51 @@ var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
 
 
                         case Scenario.MagicBased:
-                            chat.AppendSystemMessage(StoryInfo);
                             Console.WriteLine("You prepare your magic to defeat the upcoming enemy.");
                             Task.Delay(2000).Wait();
-                            Console.WriteLine($"You have HP: {Health} remaining..");
+                            Console.WriteLine($"You have HP: {newPlayer.Health} remaining..");
 
-                            chat.AppendUserInput($"continue the story.. characters encounter and must fight one of the {EnemyAi},"
+                            var endMagicScenario = await narrator.NarrateAsync($"continue the story.. characters encounter and must fight one of the {EnemyAi},"
                              + "the player take damage and is injured!.."
                              + $"the battle is {CombatDescription} but the player use their {magicSpell[new Random().Next(0, 8)]}"
                              + $"player is battling in this {Setting} now uses more magic abilities and {magicSpell[new Random().Next(0, 8)]}!.."
                              + $"the battle is magical,chaotic, they try relentlessly to defeat this individual {EnemyAi} they survive and continue their {Goal}.. four sentences");
-                            var endMagicScenario = await chat.GetResponseFromChatbotAsync();
-                            Console.WriteLine(endMagicScenario);
                             BattleDetail = endMagicScenario;
                             newPlayer.Health -= new Random().Next(3, 10);
+                            Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
+                            ChapterTwoComplete = true;
+                        await Chapter2();
+                        return this;
+
+                        case Scenario.LuckBased:
+                            Console.WriteLine("Fortune is on your side... \n");
+                            Task.Delay(2000).Wait();
+
+                            // luck turns the fight, so the hero only takes a glancing blow
+                            var endLuckScenario = await narrator.NarrateAsync($"continue the story.. characters encounter and must fight one of the {EnemyAi} in the {Setting}, "
+                             + "the player is outmatched and has no strength, speed or magic to rely on, only luck. "
+                             + $"the battle is {CombatDescription}, but a series of lucky accidents turns the fight: the {EnemyAi} slips, a weapon breaks, the ground gives way at the perfect moment. "
+                             + "the player takes only a glancing wound and wins almost by chance, "
+                             + $"then continues toward their goal: {Goal}.. four sentences");
+                            BattleDetail = endLuckScenario;
+                            newPlayer.Health -= new Random().Next(1, 6);
+                            Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
+                            ChapterTwoComplete = true;
+                        await Chapter2();
+                        return this;
+
+                        case Scenario.HealthBased:
+                            Console.WriteLine("You brace yourself to endure the blows... \n");
+                            Task.Delay(2000).Wait();
+
+                            // a tough hero wins by outlasting the enemy, but takes heavy damage doing it
+                            var endHealthScenario = await narrator.NarrateAsync($"continue the story.. characters encounter and must fight one of the {EnemyAi} in the {Setting}, "
+                             + "the player has no special skill, only toughness and endurance. "
+                             + $"the battle is {CombatDescription}: the player takes blow after blow, refusing to fall, until the {EnemyAi} tires and makes a mistake. "
+                             + "the player wins by outlasting the enemy, battered and bleeding but still standing, "
+                             + $"then continues toward their goal: {Goal}.. four sentences");
+                            BattleDetail = endHealthScenario;
+                            newPlayer.Health -= new Random().Next(5, 13);
                             Console.WriteLine($"You have HP: {newPlayer.Health} remaining");
                             ChapterTwoComplete = true;
                         await Chapter2();
@@ -476,13 +456,6 @@ var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
             // TODO: add some interacting aspect to this section
             // add one or two if checks
             // find inventory armor that adds to health
-
-            // api junk
-            string apikeyFilePath = "apikey.txt";
-            string text = File.ReadAllText(apikeyFilePath);
-
-            OpenAIAPI api = new OpenAIAPI(text);
-            var chat = api.Chat.CreateConversation();
 
             // story helper classes
             Grammar grammar = new Grammar();
@@ -520,21 +493,15 @@ var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
             Task.Delay(2500).Wait();
             Console.WriteLine("prepare for an enemy encounter!... \n");
 
-            chat.AppendSystemMessage(StoryInfo + BattleDetail);
-
-            // use a pre made template function for the append input of this section
-            chat.AppendUserInput(nextPhase.ThirdPhase(Setting, EnemyAi, combatDescription[new Random().Next(2, 8)], new Random().Next(1,4)));
-            chat.AppendUserInput($"write an update to the adventure, where the player must battle and defeat some of the {EnemyAi} and approach the enemy leader,"
+            // the narrator already remembers StoryInfo and BattleDetail from earlier turns
+            // use a pre made template function for the start of this section
+            var Chapter2Conclusion = await narrator.NarrateAsync(nextPhase.ThirdPhase(Setting, EnemyAi, combatDescription[new Random().Next(2, 8)], new Random().Next(1,4)) + " "
+            + $"write an update to the adventure, where the player must battle and defeat some of the {EnemyAi} and approach the enemy leader,"
             + $"write and describe the conflict and tension of the story begin to build. The player now faces obstacles and challenges that make it increasingly difficult to achieve their {Goal}"
             + $"they use their skills but the {EnemyAi} and their leader {EnemyLeader} proves to be a real challenge.. "
             + $"luckily, they use their speed to {dodge[new Random().Next(0, 10)]} the enemy.. they navigate the {Setting} and get away!"
             + $"the evil {EnemyLeader} leader.. the journey continues ..one paragraph \n");
-            //var Chapter2Conclusion = await chat.GetResponseFromChatbotAsync();
-
-            //BossEncounter1 = Chapter2Conclusion;
-
-            //Console.WriteLine(Chapter2Conclusion);
-            //BattleDetail = Chapter2Conclusion;
+            BossEncounter1 = Chapter2Conclusion;
 
 
             Console.WriteLine("chapter 2 end");
@@ -561,13 +528,6 @@ var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
             // NPC encounter
             // receive berry for health and speed or inv item to increase defense 
             // if luck is high, receive both
-
-            // api junk
-            string apikeyFilePath = "apikey.txt";
-            string text = File.ReadAllText(apikeyFilePath);
-
-            OpenAIAPI api = new OpenAIAPI(text);
-            var chat = api.Chat.CreateConversation();
 
             // story helper classes
             Grammar grammar = new Grammar();
@@ -604,14 +564,12 @@ var result = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
             Console.WriteLine("Press enter to continue to the side quest... ");
             Console.ReadLine();
 
-            chat.AppendSystemMessage(StoryInfo + BattleDetail + BossEncounter1);
-            chat.AppendUserInput($" update story so that the player encounters a stranger and write a side quest for the story"
+            var chapter3end = await narrator.NarrateAsync($" update story so that the player encounters a stranger and write a side quest for the story"
             + $"in the side quest the player must help a {npcEncounter[new Random().Next(npcEncounter.Length)]}"
             + $"write an outcome where the player is rewarded with a magic berry that heals them"
             + $"after helping the player continues the journey to achieve {Goal} and {EnemyGoal} and save the {Setting}.. player prepares for final upcoming battle..one paragraph \n");
 
-            //var chapter3end = await chat.GetResponseFromChatbotAsync();
-            //Console.WriteLine(chapter3end);
+            NPCEncounter1 = chapter3end;
 
             Console.WriteLine("chapter 3 end");
 

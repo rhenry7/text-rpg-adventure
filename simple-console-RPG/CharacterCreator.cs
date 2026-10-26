@@ -37,6 +37,18 @@ public class CharacterStats
 
     public string? RollDiceChoice { get; set; }
 
+    // starting bonuses per class, in menu order (health is in HP, 1 point = 10 HP)
+    private static readonly (string Name, int Health, int Speed, int Strength, int Magic, int Luck)[] Classes =
+    {
+        ("Elf",       0,  4, 2, 0, 0),
+        ("Mage",      0,  0, 0, 6, 0),
+        ("Hero",      0,  2, 5, 0, 0),
+        ("Hobbit",    0,  0, 0, 0, 6),
+        ("Dwarf",     0,  0, 8, 0, 0),
+        ("Barbarian", 10, 0, 5, 0, 0),
+        ("Thief",     0,  5, 0, 0, 1),
+    };
+
     public void PrintOptions()
     {
         Console.WriteLine("Choose your starting class...");
@@ -53,30 +65,70 @@ public class CharacterStats
         Task.Delay(1000);
         Console.WriteLine("6. Barbarian - +1 HP, +5 strength"); // hp; strength;
         Task.Delay(1000);
-        Console.WriteLine("7. Theif - +5 speed, +1 luck"); // speed; luck;        StartingClass = int.Parse(Console.ReadLine());
+        Console.WriteLine("7. Thief - +5 speed, +1 luck"); // speed; luck;
         Task.Delay(1000);
-        StartingClass = int.Parse(Console.ReadLine());
+
+        // accept either the number or the class name, and ask again on anything else
+        while (true)
+        {
+            string input = GameInput.ReadLineOrQuit();
+            if (int.TryParse(input, out int choice) && choice >= 1 && choice <= Classes.Length)
+            {
+                StartingClass = choice;
+                break;
+            }
+
+            int byName = Array.FindIndex(Classes, c => c.Name.Equals(input, StringComparison.OrdinalIgnoreCase));
+            if (byName >= 0)
+            {
+                StartingClass = byName + 1;
+                break;
+            }
+
+            Console.WriteLine($"Please enter a number from 1 to {Classes.Length}, or a class name.");
+        }
         Console.WriteLine("\n");
+    }
+
+    // reads a whole number between min and max, asking again until it gets one
+    private static int ReadInt(int min, int max)
+    {
+        while (true)
+        {
+            string input = GameInput.ReadLineOrQuit();
+            if (int.TryParse(input, out int value) && value >= min && value <= max)
+            {
+                return value;
+            }
+            Console.Write($"Please enter a number from {min} to {max}: ");
+        }
     }
 
     public async Task<PlayerStats> CreateCharacter()
     {
         Console.WriteLine("Enter your character name ");
-        Name = Console.ReadLine();
+        Name = (Console.ReadLine() ?? "").Trim();
+        if (Name == "")
+        {
+            Name = "Adventurer";
+        }
         Console.WriteLine("\n");
 
         Task.Delay(1000);
         Console.WriteLine($"Welcome {Name}! \n");
         PrintOptions();
 
-        if (StartingClass == 1)
         {
-            CharacterClass = "Elf";
+            var chosen = Classes[StartingClass - 1];
+            CharacterClass = chosen.Name;
             PlayerStats playerStats = new PlayerStats();
-            playerStats.Speed = 4;
-            playerStats.Strength = 2;
+            playerStats.Health = chosen.Health;
+            playerStats.Speed = chosen.Speed;
+            playerStats.Strength = chosen.Strength;
+            playerStats.Magic = chosen.Magic;
+            playerStats.Luck = chosen.Luck;
 
-            Console.WriteLine("You have chosen Elf! \n");
+            Console.WriteLine($"You have chosen {CharacterClass}! \n");
 
             var pointsToSpend = 10;
             int pointsRemaining = 10;
@@ -99,10 +151,10 @@ public class CharacterStats
             for (int i = 0; i < stats.Length; i++)
             {
                 Console.Write($"{stats[i]}: ");
-                statsValues[i] += int.Parse(Console.ReadLine());
+                statsValues[i] += ReadInt(0, pointsRemaining);
                 pointsRemaining = pointsToSpend -= statsValues[i];
 
-                if (pointsRemaining == 0 || pointsRemaining < 0)
+                if (pointsRemaining == 0)
                 {
                     Console.WriteLine($"You have ran out of points \n");
                     break;
@@ -155,8 +207,6 @@ public class CharacterStats
             //Console.WriteLine(chapterFour);
             return playerStats;
         }
-
-        return null;
     }
 
     public int RollDice()
